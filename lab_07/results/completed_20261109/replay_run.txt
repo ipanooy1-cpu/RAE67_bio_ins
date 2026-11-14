@@ -1,0 +1,2 @@
+Wrote 1 virtual trials to C:\Users\ittip\Downloads\RAE67_bio_ins-main\lab_07\results\completed_20261109\replay; physical and ROS latency: N/A
+

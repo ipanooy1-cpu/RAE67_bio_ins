@@ -1,0 +1,9 @@
+All 9 runner/contact manifests verify against exact file SHA256
+601 states/600 intervals per condition; common warmup, schedules, bounded commands, segment-distance additivity and N/A paper metrics verified
+B2 pre-state command scheduling at10.00/10.05 and end-state hormone updates verified
+Both one-factor runs keep their declared fixed parameter unchanged in every interval
+Fault fallback applied before command at15.00 for all4conditions, B2/B3 reset and subsequent recovery verified
+Zero, one and single-interval spike verified
+Contact: first valid2.45 s, constantN/A, all-inverted SI−1/SIF≈0/release.5 and exactly50 fault-contaminated rows verified
+Actual Lab04 handoff contract reproduces default B2 raw states and intervals exactly
+Full B0-B3 deterministic metrics reproduce exactly on a second run

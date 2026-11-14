@@ -1,0 +1,130 @@
+{
+  "status": "PROPOSED ONLY; AHM-CPG integration, ROS/DDS, 600s human scenario and real robot NOT EXECUTED",
+  "question": "การเพิ่มฮอร์โมน engagement ที่สะสมตามสิ่งเร้า ก่อนปรับ gain ของ SO(2) CPG ลดการเปลี่ยนคำสั่งฉับพลันและทำให้การฟื้นตัวหลังปิดสิ่งเร้าช้ากว่า direct stimulus หรือไม่ ในโคมไฟปฏิสัมพันธ์ 600 s?",
+  "hypothesis": "C1 hormone จะลด peak command rate และเพิ่ม recovery time เทียบ C0 direct ภายใต้ fixture เดียวกัน; ไม่รับรอง both latency ดีขึ้น และไม่ใช้ state label เป็นหลักฐานอารมณ์จริง",
+  "biological_inspiration_source": "การสะสมและสลายสัญญาณฮอร์โมนที่ทำให้ผลคงอยู่หลัง stimulus; ใช้สมการต้นทางในเอกสาร Week04 ของรายวิชา Hc(t)=beta Hc(t-1)+Hg(t)-Hr(t), Hg=alpha_h f(S), Hr=sum(gamma_i Receptor_i). SO(2) recurrent oscillator ตาม Lab03/course notation ของ Dr. Poramate; การเชื่อมและตัวเลขด้านล่างเป็น proposed course model ไม่ใช่ physiology calibration",
+  "AHM_equation": "หนึ่ง hormone engagement H: R_old=clamp(H_old,0,1); P=.8*S; C=.6*H_old; B=.2*R_old; H_raw=H_old+dt_h*(P-C-B); H_new=clamp(H_raw,0,1); R_new=H_new, dt_h=.05s,H0=0. ทุก rate ใช้ OLD state แล้ว update ครั้งเดียว. beta ไม่เท่ากับ clear โดยตรง; โมเดลนี้เป็น Euler course adaptation",
+  "SO2_CPG_equation": "[a1_next,a2_next]^T=alpha*[[cos(phi),sin(phi)],[-sin(phi),cos(phi)]]*[o1,o2]^T; o1_next=tanh(a1_next),o2_next=tanh(a2_next); คำนวณพร้อมกันจาก OLD o. alpha=1.10,phi=.20 rad/update,o1(0)=.10,o2(0)=0,dt_cpg=.02s; tanh และค่าพารามิเตอร์เป็น course choices ไม่ใช่ continuous-time frequency calibration",
+  "integration_description": "Sensor validation/debounce→S=max(button,touch,approach_binary); AHM→R; C0 ใช้ R=S, C1 ใช้ R=H. ทั้งคู่ G=.02+.06*R rad และ q_target=q_neutral+G*[o1,o2,-o1], ผ่าน limits/slew/watchdog ก่อน driver. FSM แสดง emotion/RGB เดิม โดย near/fault override CPG; เมื่อไม่ปลอดภัยหยุด oscillator path. คง phi=.20 และalpha=1.10 เพื่อเปลี่ยนเพียงการมี hormone memory",
+  "independent_variable": "มี/ไม่มี hormone memory ก่อน CPG gain เท่านั้น; C0/C1 ชื่อซ้ำกับ transport study แต่เป็นคนละการทดลอง ห้ามนำผลtransportมาแทนผลAHM",
+  "conditions": [
+    {
+      "name": "C0 direct",
+      "baseline": true,
+      "change": "R=S direct ไม่มี hormone memory; คง CPG, gain mapping, safety และ fixture เหมือน C1",
+      "repeats": 3
+    },
+    {
+      "name": "C1 hormone",
+      "baseline": false,
+      "change": "R=H bounded Euler engagement; เปลี่ยนเฉพาะ memory stage",
+      "repeats": 3
+    }
+  ],
+  "metrics": [
+    {
+      "name": "Peak command rate",
+      "unit": "rad/s",
+      "measurement": "max over joints,ticks |q_applied(t)-q_applied(t-dt)|/dt; report number of samples at slew cap too; higher smoothness expected lower peak but cap may cause tie",
+      "missing_rule": "ไม่มี traceหรือstop→N/Aพร้อมreason; ไม่ลบทิ้ง trial และไม่ใส่0; denominator=all planned3trials/condition/platform"
+    },
+    {
+      "name": "Recovery time",
+      "unit": "s",
+      "measurement": "จาก falling edgeของstimulus ถึง R<=.1 ต่อเนื่อง .5s; กลไกinternal ไม่ใช่physical onset; เทียบ C0/C1 ภายใต้ off intervalเดียวกัน",
+      "missing_rule": "ยังไม่ฟื้นก่อนจบoff interval→right censored พร้อมเวลาสังเกต; ห้ามแทน0"
+    },
+    {
+      "name": "Both physical latency",
+      "unit": "s",
+      "measurement": "max(first physical motion,first photodiodeRGB change)-hardware source trigger; simulationใช้ applied onsetแยกtable; deadline1s observation22s/event",
+      "missing_rule": "เก็บทุกexpectedID; ช่องใดไม่พบ→null/missing,พบครบแต่>1s→deadline fail; ห้ามรวมphysicalและcommand metrics"
+    }
+  ],
+  "controls": [
+    "baseline FSM/filter/topic contract and safety overrides identical; no online learning",
+    "same scripted input IDs/times/values paired seeds41/42/43 and identical dt,duration,reset H/o and oscillator phase",
+    "same neutral pose,limits,slew .8rad/s,RGB mapping,transport settings,sensor positions,lighting and supply; calibrate per platform"
+  ],
+  "parameters": [
+    {
+      "name": "AHM prod/clear/bind",
+      "value": [
+        0.8,
+        0.6,
+        0.2
+      ],
+      "unit": "normalized H per s, 1/s, normalized H per s",
+      "provenance": "Lab04 proposed course model; not biological measured constants"
+    },
+    {
+      "name": "H0 / H bounds / receptor bounds",
+      "value": [
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      "unit": "dimensionless",
+      "provenance": "Lab04 normalization/reset convention"
+    },
+    {
+      "name": "dt_h / dt_cpg",
+      "value": [
+        0.05,
+        0.02
+      ],
+      "unit": "s",
+      "provenance": "group proposed multi-rate schedule, hold R between hormone updates"
+    },
+    {
+      "name": "SO2 alpha/phi/o1_init/o2_init",
+      "value": [
+        1.1,
+        0.2,
+        0.1,
+        0
+      ],
+      "unit": "dimensionless,rad/update,dimensionless,dimensionless",
+      "provenance": "Lab03 course oscillator and initialized trial; phi not Hz"
+    },
+    {
+      "name": "gain intercept/slope",
+      "value": [
+        0.02,
+        0.06
+      ],
+      "unit": "rad",
+      "provenance": "group proposed low-amplitude simulation starting values; require hardware calibration"
+    },
+    {
+      "name": "tilt/extend/nod bounds",
+      "value": [
+        0.35,
+        0.25,
+        0.3
+      ],
+      "unit": "rad absolute symmetric",
+      "provenance": "Lab06 software bounds only; hardware limits must measured and narrower limit wins"
+    },
+    {
+      "name": "slew cap / stale limit",
+      "value": [
+        0.8,
+        0.12
+      ],
+      "unit": "rad/s, s",
+      "provenance": "Lab06 course safety/freshness constants, not certified hardware limits"
+    }
+  ],
+  "simulation_plan": "ยังไม่ได้รัน AHM-CPG600s: implement multi-rate AHMat.05s and CPGat.02s, same7topic adapter, log H/R/o/q/source IDs plus clocks; 2conditions x3pairedseeds x600s. Reset H=0,o=[.1,0] and FSM normal before each; warm-up excluded by fixed2s then start common trial clock. Keep raw/config/codeSHA and all aborted trials",
+  "real_robot_plan": "ยังไม่ได้รัน: Ubuntu24.04/Jazzy host + tested MCU/Agent firmware (not supplied). Sensors button/touch/range and encoder+photodiode measurement. Confirm actual board,pins,power,neutral,sign,gear ratio and mechanical limits with instructor. Map abstract tilt/extend/nod to calibrated J2/J3/J4 only after linkage fit; J1 fixed neutral until a revised contract. Execute 2conditions x3trials x600s with one consenting operator/participant per pair and rests; report as repeated case study, not population inference",
+  "clock_correlation_plan": "Wire7topics unchanged noHeader; use sidecar with trial_id/source_id/acquisition sequence at instrumented source. MCU source trigger and photodiode/encoder share acquisition clock when possible; otherwise two-way sync estimateoffset/drift with timestamps before/aftertrial, state residual+resolution uncertainty and reject cross-host subtraction when mapping unavailable. ROS bag/collector alone measures delivery or applied command not physical onset; source_latency null when identity ambiguous",
+  "safety_stop_plan": "ก่อนจริงต้องให้ผู้สอนตรวจ wiring/limitsและกำหนดwatchdog deadlineจากcalibration; operatorเข้าถึงE-stopตัดenableได้ตลอด. near/fault/reconnect require validated neutral recovery; comm watchdog never hold stale moving trajectory. Stop trial immediately on unintended motion,collision risk,overcurrent/overtemperature or lowbattery using manufacturer thresholds verified for actual device; recordreasonandtimestamp then reset onlyafterinspection",
+  "order_counterbalancing": "3 pairs perplatform order C0-C1,C1-C0,C0-C1 to reduce systematic order bias; only partial balance because3odd, disclose residual order effect. Reset H/o/FSM and pose between trials and rest participant",
+  "paired_seed_or_participant_plan": "Simulation paired seeds41,42,43. Real P01 voluntary adult operator in3paired sessions using samepredeclaredscript, anonymized IDs and noface/audio recording; seek instructor approval/consent under course procedure before actual study. No participant recruited/results collected yet",
+  "expected_input_ids_before_run": "Completed22s transport study uses button_01,touch_01,approach_01,clear_01,near_01,clear_02,button_02. Future600s study predeclares p_button_060,p_touch_180,p_approach_300,p_clear_420,p_button_540 (5expectedboth pertrial; retainallfault/conflictprobes separately). On intervals60-70,180-190,300-310,near400-420,button540-550; approachoff310 notprimary, clear420 recoveryprimary. motion/RGB expression must differ before each primary; if not, retain no-state-change asmiss not editIDsafterdata",
+  "human_scenario_duration_s": 600,
+  "timeline": "Proposed after09Nov2026: D1 instructor reviews proposal/equations; D2 implementAHMCPG+unit/fixture checks; D3 calibrateandteststop/clock; D4 simulation6x600s; D5 real6x600safterreadinessgate; D6 analyzealltrialsandreport. Totalplannedtrialtime120min plussetup/reset/rest; exactcalendar dates require team availability"
+}

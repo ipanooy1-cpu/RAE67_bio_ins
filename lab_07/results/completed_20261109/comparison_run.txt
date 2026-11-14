@@ -1,0 +1,2 @@
+Wrote 6 virtual trials to C:\Users\ittip\Downloads\RAE67_bio_ins-main\lab_07\results\completed_20261109\comparison; physical and ROS latency: N/A
+

@@ -1,0 +1,10 @@
+{
+  "B2": {
+    "distance_m": 3.382579881163648,
+    "command_latency_s": 0.15000000000000036,
+    "command_recovery_s": 2.8500000000000014,
+    "updates": 600
+  }
+}
+Report: C:\Users\ittip\Downloads\RAE67_bio_ins-main\lab_05\results\completed_20261109\lab04_handoff\report.html
+

@@ -1,0 +1,9 @@
+C0: 601 rows, 600 updates, shared stimulus verified
+C1: 601 rows, 600 updates, shared stimulus verified
+C2: 601 rows, 600 updates, shared stimulus verified
+C3: 601 rows, 600 updates, shared stimulus verified
+C4: 601 rows, 600 updates, shared stimulus verified
+C1 first two on updates: H=.04, .0784 verified
+Extreme tests: zero baseline, one finite, one-interval spike, fault reset/recovery, N/A timing verified
+Actual Week03 contract produces identical C1 raw trace
+Independent rerun of all five deterministic conditions reproduces metrics exactly

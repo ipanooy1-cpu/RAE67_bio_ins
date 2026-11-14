@@ -1,0 +1,28 @@
+{
+  "B0": {
+    "distance_m": 2.332678608861308,
+    "command_latency_s": null,
+    "command_recovery_s": null,
+    "updates": 600
+  },
+  "B1": {
+    "distance_m": 3.3831627554327697,
+    "command_latency_s": null,
+    "command_recovery_s": null,
+    "updates": 600
+  },
+  "B2": {
+    "distance_m": 3.2230443884738116,
+    "command_latency_s": null,
+    "command_recovery_s": null,
+    "updates": 600
+  },
+  "B3": {
+    "distance_m": 3.3532727835943916,
+    "command_latency_s": null,
+    "command_recovery_s": null,
+    "updates": 600
+  }
+}
+Report: C:\Users\ittip\Downloads\RAE67_bio_ins-main\lab_05\results\completed_20261109\fault\report.html
+

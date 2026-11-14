@@ -1,0 +1,57 @@
+<!doctype html><html lang="th"><meta charset="utf-8"><title>Lab07 answers</title><style>body{font-family:"Leelawadee UI",Tahoma,sans-serif;color:#111;max-width:1050px;margin:30px auto;line-height:1.55}h1,h2,h3{color:black}table{border-collapse:collapse;width:100%;font-size:12px;margin:12px 0}td,th{border:1px solid #bbb;padding:6px;vertical-align:top}th{background:#eee}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px}img{max-width:100%}@page{size:A4;margin:16mm} @media print{body{margin:0;font-size:11pt;max-width:none}.page{page-break-after:always}.page:last-child{page-break-after:auto}h2{break-after:avoid}tr{break-inside:avoid}}</style><body><h1>ใบงาน Lab07 ฉบับตอบพร้อมผล offline</h1>
+<p>อิทธิพล แป้นอ้อย / 6752500053 | กลุ่ม: ยังไม่ระบุ | วันที่รัน 09/11/2026</p>
+<p>ผลทั้งหมดเป็น simulation ด้วย virtual clock และ proposed course model ไม่มี learning และยังไม่ได้วัด ROS/DDS หรือการเคลื่อนไหวของหุ่นยนต์จริง AHM–CPG และ scenarioคน600s ด้านล่างเป็น proposal ยังไม่ได้ implement/run ใน runner FSM นี้</p>
+<p>Policy SHA256: 0be3de88fc5d99008982aa7ba0e93121e8c37ad1f1fcbd37e6b6d7f9def6379b</p>
+<h2>1 Architecture และ topic contract</h2>
+<p>ระบบ offline: synthetic input_source→validated/debounced interaction/FSM→servo/RGB commands→collector ในprocessเดียว ไม่มีDDS. ROS sourceที่มีอยู่แยกสามexecutable; driver/MCU firmware/Agentต้องเตรียมเพิ่ม</p>
+<p>Graph โครงงานที่เสนอ: sensor driver→interaction→AHM(H)→SO(2)CPG(o1,o2)→output arbiter←FSM(state), จากนั้น clamp/slew/watchdog→motor/LED driver→encoder/photodiode logger. ให้ AHM/CPG/arbiter เป็น internalmodulesของinteractionก่อนเพื่อคง7topics; hostเก็บFSM,H,o; MCUเก็บacquisition sequenceและdriver watchdog. อิทธิพลรับผิดชอบcode/analysis; ผู้ควบคุมhardwareและผู้ตรวจsafetyต้องยืนยันก่อนทดลอง</p>
+<table>
+<tr><th>Topic</th><th>Type</th><th>Units</th><th>Publisher→subscriber</th></tr>
+<tr><td>/lamp/input/button</td><td>std_msgs/Bool</td><td>bool</td><td>input_source→interaction</td></tr>
+<tr><td>/lamp/input/touch</td><td>std_msgs/Bool</td><td>bool</td><td>input_source→interaction</td></tr>
+<tr><td>/lamp/input/distance</td><td>std_msgs/Float32</td><td>m</td><td>input_source→interaction</td></tr>
+<tr><td>/lamp/interaction</td><td>std_msgs/String</td><td>event</td><td>interaction→collector/logger</td></tr>
+<tr><td>/lamp/emotion</td><td>std_msgs/String</td><td>state</td><td>interaction→collector/logger</td></tr>
+<tr><td>/lamp/servo_command</td><td>std_msgs/Float32MultiArray</td><td>rad [tilt,extend,nod]</td><td>interaction→collector/driver</td></tr>
+<tr><td>/lamp/rgb_command</td><td>std_msgs/ColorRGBA</td><td>r,g,b,a in [0,1]</td><td>interaction→collector/LED driver</td></tr>
+</table>
+<p>QoS ทุกpublisher/subscriber: RELIABLE, KEEP_LAST depth10, VOLATILE ตามinterface_contract.json ทั้งหมดมีqueueจำกัดและต้องตรวจ stale แยก; reliable ไม่รับรองdeadlineหรือphysicalonset. ใช้ ros2 topic list -t, ros2 topic info -v และ ros2 topic echo ตรวจtype/QoS/namespaceเมื่อไม่เห็นmessage. เปลี่ยนเฉพาะsourceและdriver adapterเมื่อย้ายsimulation→robot</p>
+<h2>2 Units และ calibration</h2>
+<p>servo data=[tilt,extend,nod]rad เช่น interested=[.22,.18,.06]. RGB interested=[255,180,0]→ColorRGBA(1,0.705882,0,1); normal=[60/255,90/255,140/255,1]. เปลี่ยนจำนวนแกนหรือส่งdegreeตรง ๆ ไม่ได้ ต้องแปลงradเป็นjointจริงหลังcalibrate neutral,sign,gearing,linkage/bounds/velocity. J1ฐานตรึงneutralก่อน; mapping J2/J3/J4เป็นเพียงแผนรอตรวจกลไกจริง</p>
+<p>Events=fault,near,clear,touch,button,approach,timeout,idle; states=normal,interested,happy,afraid,sleepy. safety priorityและafraid guardเหมือนLab06. Controllerdt=.02s/scheduler=.04s, freshness&gt;.12s→fault. Driverwatchdog/MCUdeadlineต้องกำหนดจากhardwaretestก่อนenable; ไม่ถือ.12sเป็นmotorwatchdogที่สอบเทียบแล้ว</p>
+<h2>3 Hypothesis และ measurement boundary ก่อนรัน</h2>
+<p>PREDICTION_BEFORE_RUN.json ประกาศว่าC1composite delay/dropอาจเพิ่มage,latency,missingและfault เทียบC0ideal. Controls: FSM,guardedfilter,bounds/slew,22s,dt.02s,scheduler.04sและsourcefixturepairedseeds41/42/43เหมือนกัน. Expected7 IDs=button_01, touch_01, approach_01, clear_01, near_01, clear_02, button_02, retainall10sources; deadline1s, observation22s. Clockเป็นvirtualเดียวกัน; onsetคือappliedcommand ไม่ใช่motor/LEDจริง</p>
+<p>C0delay0/drop0; C1delaychoices[0,.02,.04,.06,.10,.14,.18]s,randomdrop.08และburst12.50–12.70s. initialcheckerfail7pairs ตัวอย่าง interested+timeoutคืนNone แก้เช่นLab06 แล้วbaseline/groupผ่าน40pairsทั้งคู่</p>
+<h2>4 ผล3pairedrepeats และ denominator</h2>
+<table>
+<tr><th>Pair/seed</th><th>C0 median s</th><th>C1 median s</th><th>C0 faults/1101</th><th>C1 faults/1101</th><th>Primary missing C0/C1</th></tr>
+<tr><td>1/41</td><td>0.04</td><td>0.15</td><td>20</td><td>54</td><td>0/1</td></tr>
+<tr><td>2/42</td><td>0.06</td><td>0.14</td><td>20</td><td>81</td><td>0/1</td></tr>
+<tr><td>3/43</td><td>0.04</td><td>0.1</td><td>20</td><td>56</td><td>0/0</td></tr>
+</table>
+<img src="comparison_summary.png">
+<p>Medianคำนวณเฉพาะprimaryที่พบboth จึงต้องอ่านคู่กับmissing: C0ผ่าน21/21; C1ผ่าน19/21 และmissing2 ไม่ใช่latency0. seed41clear_02ไม่มีboth; seed42button_02ไม่มีboth; seed43ครบ7. maxobservedC0=.14sทุกseed, C1=.20/.22/.18s. C1faultticks=54/81/56 เทียบC0=20/20/20 ต่อ1101ticks. การเพิ่มfaultไม่ใช่หลักฐานแยกสาเหตุdropเพียงอย่างเดียว</p>
+<table>
+<tr><th>C/seed</th><th>Published</th><th>Received</th><th>Accepted</th><th>Drop</th><th>Out-of-order</th><th>Censored</th><th>Mean age s</th></tr>
+<tr><td>C0/41</td><td>3303</td><td>3303</td><td>3303</td><td>0</td><td>0</td><td>0</td><td>0.000000</td></tr>
+<tr><td>C1/41</td><td>3303</td><td>3031</td><td>1618</td><td>257</td><td>1413</td><td>15</td><td>0.076853</td></tr>
+<tr><td>C0/42</td><td>3303</td><td>3303</td><td>3303</td><td>0</td><td>0</td><td>0</td><td>0.000000</td></tr>
+<tr><td>C1/42</td><td>3303</td><td>3007</td><td>1586</td><td>287</td><td>1421</td><td>9</td><td>0.077931</td></tr>
+<tr><td>C0/43</td><td>3303</td><td>3303</td><td>3303</td><td>0</td><td>0</td><td>0</td><td>0.000000</td></tr>
+<tr><td>C1/43</td><td>3303</td><td>2991</td><td>1598</td><td>300</td><td>1393</td><td>12</td><td>0.076489</td></tr>
+</table>
+<p>3303published=3channels×1101ticks/trial. ตรวจ published=received+drop+censored และ received=accepted+out_of_order ทุกtrial. Censoredคือdeliveryหลังจบ22sไม่ใช่drop. Meanageใช้receivedmessagesรวมที่out_of_orderตามrunner. C0mean/maxage=0; C1mean=.076853/.077931/.076489s,max=.18s. ไม่อ้างเป็นROSnetworkbenchmark</p>
+<p>ไฟล์repository-relative: results/completed_20261109/comparison/C0_r01..03 และC1_r01..03/ มีinput_trace.csv,command_trace.csv,events.csv,metrics.json,config.json; comparison/summary.json,manifest.json,source_snapshot/,report.html. RUN_MANIFEST.jsonเก็บPython/command/policySHA. ReplayC1seed42: command_trace.csvและevents.csvตรงต้นฉบับbyte-for-byteและSHA; analysis_validation.jsonเก็บผลตรวจ. คำสั่งรันซ้ำใช้outputใหม่</p>
+<pre>python check_submission.py --contract baseline
+python check_submission.py --contract group
+python offline_lab.py --condition all --repeats 3 --output-dir results/reproduce_01
+python offline_lab.py --condition C1 --repeats 1 --replay results/completed_20261109/comparison/C1_r02/input_trace.csv --output-dir results/replay_reproduce_01
+python check_proposal.py proposal.json</pre>
+<h2>5 Invalid/stale กับ communication stress</h2>
+<p>ทั้งสองconditionมีinvalid11sและstale12sเป็นbaselineprobes จึงC0ยังfault20ticksได้. C1เพิ่มjitter+dropพร้อมกันและทิ้งmessageเก่าตามsequenceในsidecar ทำให้age/missingเปลี่ยน. จะระบุผลjitterหรือdropแยกต้องเพิ่มdelay-only/drop-onlyโดยคงส่วนอื่นเหมือนกัน ห้ามเทียบC1กับC0แล้วสรุปสาเหตุเดี่ยว</p>
+<h2>6 Clock และ micro ROS</h2>
+<p>MCUclient(sensoracquisition/driver watchdog)→serialtransport→microROSAgent→hostinteraction→commandtopic→Agent→MCUdriver. ยังไม่ได้ต่อหรือรันAgent/firmware. Bool/String/Float32ไม่มีHeaderจึงไม่มีsourceacquisitiontime/IDบนwire; callback receiptสดอาจเป็นค่าเก่าซ้ำ. local_sequenceของคนละnodeไม่ใช่globalID และ perf_counterคนละhostหักตรง ๆ ไม่ได้</p>
+<p>แผน: sidecartrial_id/source_id/sequenceจากจุดกำเนิด, hardwaretriggerร่วมกับencoder/photodiodeบนclockเดียวกัน หรือclockmappingoffset/driftที่วัดก่อน/หลังtrialพร้อมresidual+resolutionuncertainty. identityไม่ชัดหรือclockmappingไม่มีให้source_latency=N/A. ROSbagช่วยreplayและตรวจdelivery/config แต่ไม่พิสูจน์physicalonset; collectorreceiptไม่เท่ากับdriverapplyหรือmotion</p>
+<h2>7 Proposal และ exit quiz</h2>
+<p>proposal.jsonกรอกครบ, ฉบับอ่าน2–3หน้าอยู่results/completed_20261109/proposal.html และproposal.md. มีengagementAHM1ตัว,SO(2)CPG,AHM→CPGgain,baseline2conditions,metrics≥2,simulationและrealconditionละ3repeats,scenario600s,safety/calibration/clock/timeline. เป็นแผนอนาคตทั้งหมด แยกจากผลoffline22s. เช็กproposalยืนยันเพียงfieldครบไม่ใช่อนุมัติความถูกต้องวิทยาศาสตร์/การทดลองมนุษย์</p>
+<p>Interfaceช่วยเปลี่ยนadapterโดยคงtype/หน่วย/ความหมาย. Baselineยุติธรรมต้องคงpolicy,fixture,reset,CPG,limits,transport,measurementเหมือนกัน เปลี่ยนเพียงhormonememoryในproject; เก็บทุกmissing/abortพร้อมเหตุผล. อ้างอิงภายใน: README.md,interface_contract.json,lamp_week07/course_model.py,Lab03และLab04coursematerials; โปรดให้ผู้สอนตรวจnotation/sourceก่อนทำprojectจริง</p></body></html>

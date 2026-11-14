@@ -1,0 +1,3 @@
+Checked 40 transition pairs; contract=group; failures=0
+PASS: transition contract complete
+

@@ -1,0 +1,3 @@
+C1 r01 seed=None: transitions=9; both onset=7/10; observed <=1s=7; no both onset=3; max observed=0.140s
+Offline report: C:\Users\ittip\Downloads\RAE67_bio_ins-main\lab_06\results\completed_20261109\replay\report.html
+

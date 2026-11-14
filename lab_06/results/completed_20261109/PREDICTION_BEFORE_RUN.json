@@ -1,0 +1,18 @@
+{
+  "author": "assistant prepared before execution; not attributed to student unaided work",
+  "date": "2026-11-09T17:03:13.763068+07:00",
+  "expected_input_ids_before_run": [
+    "button_01",
+    "touch_01",
+    "approach_01",
+    "clear_01",
+    "near_01",
+    "clear_02",
+    "button_02"
+  ],
+  "contract": "baseline, also checked group",
+  "deadline_s": 1,
+  "observation_window_s": 22,
+  "hypothesis": "C1 debounce/hysteresis reduces noise-driven transitions but adds recognition delay; all10sources retained; positive7 expected both outputs; conflict touch and already-neutral fault may have no new onset",
+  "controls": "same completed baseline policy, sources paired seeds41/42/43,dt.02,duration22,scheduler.04,bounds/slew/fallback unchanged"
+}

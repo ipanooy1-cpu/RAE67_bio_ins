@@ -1,0 +1,328 @@
+import math
+
+# ==================================================
+# 1. การตั้งค่า
+# ==================================================
+
+DT = 0.05          # เวลาจำลองต่อขั้น
+DURATION = 10.0    # จำลองทั้งหมด 10 วินาที
+WARMUP_STEPS = 200
+
+# ขอบเขตตัวอย่างสำหรับ simulation เท่านั้น
+JOINT_LIMITS = [
+    (60.0, 120.0),  # J1
+    (60.0, 120.0),  # J2
+    (60.0, 120.0),  # J3
+    (60.0, 120.0),  # J4
+]
+
+# แต่ละโหมดมีท่าที่เวลา 0, 1 และ 5 วินาที
+# poses เป็นมุมกลาง [J1, J2, J3, J4] หน่วยองศา
+# gain เป็นตัวคูณสัญญาณ CPG
+#
+# มุมเหล่านี้เป็นค่าทดลองที่ออกแบบเอง
+# สมมติว่าลดมุม J4 = ก้มหัว
+
+PRESETS = {
+    "Neutral": {
+        "alpha": 1.10,
+        "phi": 0.20,
+        "gain": [2.0, 2.0, 2.0, 2.0],
+        "poses": [
+            (0.0, [90.0, 90.0, 90.0, 90.0]),
+            (1.0, [90.0, 90.0, 90.0, 90.0]),
+            (5.0, [90.0, 90.0, 90.0, 90.0]),
+        ],
+    },
+
+    "Happy": {
+        "alpha": 1.10,
+        "phi": 0.35,
+        "gain": [6.0, 8.0, 6.0, 8.0],
+        "poses": [
+            (0.0, [90.0, 90.0, 90.0, 90.0]),
+            (1.0, [90.0, 95.0, 93.0, 98.0]),
+            (5.0, [90.0, 100.0, 95.0, 105.0]),
+        ],
+    },
+
+    "Sad": {
+        "alpha": 1.10,
+        "phi": 0.12,
+        "gain": [2.0, 2.0, 2.0, 2.0],
+        "poses": [
+            (0.0, [90.0, 90.0, 90.0, 105.0]),
+            (1.0, [90.0, 85.0, 85.0, 100.0]),
+            (5.0, [90.0, 80.0, 80.0, 85.0]),
+        ],
+    },
+
+    "Confused": {
+        "alpha": 1.10,
+        "phi": 0.25,
+        "gain": [10.0, 2.0, 3.0, 5.0],
+        "poses": [
+            (0.0, [90.0, 90.0, 90.0, 90.0]),
+            (1.0, [95.0, 90.0, 88.0, 85.0]),
+            (5.0, [100.0, 90.0, 85.0, 80.0]),
+        ],
+    },
+}
+
+
+# ==================================================
+# 2. สมการ SO(2) CPG
+# ==================================================
+
+def so2_step(o1, o2, alpha, phi):
+    c = math.cos(phi)
+    s = math.sin(phi)
+
+    # ทั้งสองสมการใช้ output เดิมชุดเดียวกัน
+    a1_next = alpha * (c * o1 + s * o2)
+    a2_next = alpha * (-s * o1 + c * o2)
+
+    o1_next = math.tanh(a1_next)
+    o2_next = math.tanh(a2_next)
+
+    return o1_next, o2_next
+
+
+# ==================================================
+# 3. คำนวณมุมกลางตามช่วงเวลา
+# ==================================================
+
+def pose_at_time(t, poses):
+    # ก่อนหรือเท่าจุดเริ่มต้น
+    if t <= poses[0][0]:
+        return poses[0][1].copy()
+
+    # หาช่วงที่เวลาปัจจุบันอยู่
+    for i in range(len(poses) - 1):
+        start_time, start_angles = poses[i]
+        end_time, end_angles = poses[i + 1]
+
+        if t <= end_time:
+            progress = (
+                (t - start_time)
+                / (end_time - start_time)
+            )
+
+            # เปลี่ยนมุมกลางแบบเส้นตรงระหว่างสองท่า
+            return [
+                start + (end - start) * progress
+                for start, end in zip(
+                    start_angles,
+                    end_angles,
+                )
+            ]
+
+    # หลัง 5 วินาที คงมุมกลางของท่าสุดท้าย
+    return poses[-1][1].copy()
+
+
+# ==================================================
+# 4. แปลง CPG เป็นมุมข้อต่อ
+# ==================================================
+
+def clamp(value, low, high):
+    return max(low, min(high, value))
+
+
+def decode_angles(o1, o2, centers, gains, t):
+    # ค่อย ๆ เปิดการแกว่งในวินาทีแรก
+    # เพื่อให้ที่ t=0 มุมตรงกับท่าเริ่มต้นพอดี
+    blend = clamp(t / 1.0, 0.0, 1.0)
+
+    targets = [
+        centers[0] + blend * gains[0] * o1,
+        centers[1] + blend * gains[1] * o2,
+        centers[2] - blend * gains[2] * o1,
+        centers[3] + blend * gains[3] * o2,
+    ]
+
+    return [
+        clamp(angle, low, high)
+        for angle, (low, high) in zip(
+            targets,
+            JOINT_LIMITS,
+        )
+    ]
+
+
+def time_segment(t):
+    if t < 1.0:
+        return "0→1s"
+    elif t < 5.0:
+        return "1→5s"
+    else:
+        return "ค้างท่า"
+
+
+# ==================================================
+# 5. รันการจำลอง
+# ==================================================
+
+def select_presets():
+    print("\nเลือกโหมดที่ต้องการวาดกราฟ")
+    choices = {
+        "1": "Neutral",
+        "2": "Happy",
+        "3": "Sad",
+        "4": "Confused",
+    }
+    for number, mode in choices.items():
+        print(f"{number} = {mode}")
+    print("5 = ทุกโหมด")
+    print("พิมพ์ชื่อโหมดแทนหมายเลขได้ เช่น Happy หรือ sad")
+
+    while True:
+        choice = input("เลือกโหมด: ").strip().lower()
+        if choice in ("5", "all"):
+            return PRESETS.copy()
+
+        mode = choices.get(choice)
+        if mode is None:
+            mode = next(
+                (name for name in PRESETS if name.lower() == choice),
+                None,
+            )
+        if mode is not None:
+            return {mode: PRESETS[mode]}
+        print("กรุณาใส่หมายเลข 1–5 หรือชื่อ Neutral, Happy, Sad, Confused")
+
+
+def main():
+    selected_presets = select_presets()
+
+    import matplotlib.pyplot as plt
+
+    joint_names = ["J1", "J2", "J3", "J4"]
+    colors = ["#0099cc", "#f28e2b", "#59a14f", "#b279a2"]
+
+    if len(selected_presets) == 1:
+        fig, ax = plt.subplots(figsize=(11, 6))
+        plot_axes = [ax]
+    else:
+        fig, axes = plt.subplots(
+            2, 2,
+            figsize=(14, 9),
+            sharex=True,
+            sharey=True,
+        )
+        plot_axes = list(axes.flat)
+
+    total_steps = round(DURATION / DT)
+
+    # จำลองแยกกันทุกโหมด โดยใช้ค่าเริ่มต้นเดียวกัน
+    for ax, (mode, preset) in zip(
+        plot_axes,
+        selected_presets.items(),
+    ):
+        alpha = preset["alpha"]
+        phi = preset["phi"]
+
+        o1 = 0.10
+        o2 = 0.00
+
+        # Warmup ของแต่ละโหมด
+        for _ in range(WARMUP_STEPS):
+            o1, o2 = so2_step(o1, o2, alpha, phi)
+
+        times = []
+        angles_history = [[], [], [], []]
+        centers_history = [[], [], [], []]
+
+        for step in range(total_steps + 1):
+            t = step * DT
+
+            if step > 0:
+                o1, o2 = so2_step(
+                    o1, o2, alpha, phi
+                )
+
+            centers = pose_at_time(
+                t,
+                preset["poses"],
+            )
+
+            angles = decode_angles(
+                o1,
+                o2,
+                centers,
+                preset["gain"],
+                t,
+            )
+
+            times.append(t)
+
+            for j in range(4):
+                angles_history[j].append(angles[j])
+                centers_history[j].append(centers[j])
+
+        # เส้นทึบ = มุมคำสั่งที่รวม CPG และจำกัดมุมแล้ว
+        # เส้นประบาง = มุมกลางตามท่าที่ออกแบบ
+        for j in range(4):
+            ax.plot(
+                times,
+                angles_history[j],
+                color=colors[j],
+                label=joint_names[j],
+                linewidth=1.8,
+            )
+
+            ax.plot(
+                times,
+                centers_history[j],
+                color=colors[j],
+                linestyle="--",
+                linewidth=1,
+                alpha=0.4,
+            )
+
+        # เส้นแบ่งจุดเวลาที่กำหนดท่า
+        for boundary in [1.0, 5.0]:
+            ax.axvline(
+                boundary,
+                color="gray",
+                linestyle=":",
+                linewidth=1.2,
+            )
+
+        ax.set_title(
+            f"{mode} | alpha={alpha:.2f}, "
+            f"phi={phi:.2f} rad"
+        )
+        ax.set_xlabel("Simulation time (s)")
+        ax.set_ylabel("Joint command (degrees)")
+        ax.set_xlim(0, DURATION)
+        ax.grid(True, alpha=0.25)
+        ax.legend(loc="best")
+
+    selected_label = ", ".join(selected_presets)
+    fig.suptitle(
+        f"Lamp joint commands — {selected_label}\n"
+        "Solid: command with CPG | Dashed: pose center",
+        fontsize=14,
+    )
+
+    fig.tight_layout(rect=[0, 0, 1, 0.93])
+
+    # บันทึกแยกชื่อ เพื่อไม่ให้รูปโหมดเดียวทับรูปทุกโหมด
+    filename = (
+        "lamp_all_modes.png"
+        if len(selected_presets) > 1
+        else f"lamp_{next(iter(selected_presets)).lower()}.png"
+    )
+    fig.savefig(
+        filename,
+        dpi=200,
+        bbox_inches="tight",
+    )
+
+    print(f"Saved graph: {filename}")
+    plt.show()
+
+
+if __name__ == "__main__":
+    main()

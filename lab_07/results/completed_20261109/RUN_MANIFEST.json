@@ -1,0 +1,59 @@
+{
+  "created": "2026-11-09T17:03:18.171059+07:00",
+  "python_version": "Python 3.13.7",
+  "commands": [
+    [
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\.venv\\Scripts\\python.exe",
+      "check_submission.py"
+    ],
+    [
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\.venv\\Scripts\\python.exe",
+      "check_submission.py"
+    ],
+    [
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\.venv\\Scripts\\python.exe",
+      "check_submission.py",
+      "--contract",
+      "group"
+    ],
+    [
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\.venv\\Scripts\\python.exe",
+      "offline_lab.py",
+      "--condition",
+      "all",
+      "--repeats",
+      "3",
+      "--output-dir",
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\lab_07\\results\\completed_20261109\\comparison"
+    ],
+    [
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\.venv\\Scripts\\python.exe",
+      "offline_lab.py",
+      "--condition",
+      "C1",
+      "--repeats",
+      "1",
+      "--replay",
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\lab_07\\results\\completed_20261109\\comparison\\C1_r02\\input_trace.csv",
+      "--output-dir",
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\lab_07\\results\\completed_20261109\\replay"
+    ]
+  ],
+  "policy_sha256": "0be3de88fc5d99008982aa7ba0e93121e8c37ad1f1fcbd37e6b6d7f9def6379b",
+  "hardware_status": "not executed; ROS2/DDS and physical latency N/A",
+  "source_before_sha256": {
+    ".gitignore": "f52fef3a84c1ccc2544d29aafbf7683dd07924f58ccf738b1b758d72c1d9b271",
+    "check_proposal.py": "de7fa15ea22ac4dc6a0d3aa0612634a58190816e07b4e7f6f62dfe69d8b56492",
+    "check_submission.py": "e6c1a0546db911a080159c5959f95f9ada8a83035303fec36749c04e729212f0",
+    "interface_contract.json": "e321be1f0b4b5b055ec316d416f3d1140c97758d5443e1fc61d9ff93ed92b852",
+    "offline_lab.py": "173d98fced7d7705f306f398a9e133cdb694abebf577864dc66561c376050d3a",
+    "package.xml": "dddb8f9ae47d25abb5edec7d67f109b030f2aaaead5fa192fee2f1522c291b5d",
+    "proposal.json": "8772d2d9b4c5d72ec49d31cbf60727babec73f1d62f3b224e05917a161de062c",
+    "README.md": "1374f46f14b69e958ff946d05d35c50d6e38c2a13f026239f07d62bf1bd352bb",
+    "setup.cfg": "6717ab768a405e60c79f06c8e8dd40c9c7d988181a20a2d87cada8be3c7af5df",
+    "setup.py": "0ed31a259428e80f09fde8469cda6e1a7cf7d56304dfe71a2631db5fe061f15a",
+    "Week07_Student_Worksheet_TH.docx": "9254baec8d4cd84c43fdea7f1369ada4b9dcf1493266078993ac1fafa0daa995",
+    "worksheet.md": "f40f0a7047debffcf660c8aac69b660748e05f832e213da7015ab3a6c59b611a"
+  },
+  "outcome_status": "offline only; hardware plans are not experimental results"
+}

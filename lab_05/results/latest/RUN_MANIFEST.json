@@ -1,0 +1,108 @@
+{
+  "created": "2026-11-09T16:39:45.336507+07:00",
+  "python_version": "Python 3.13.7",
+  "commands": [
+    [
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\.venv\\Scripts\\python.exe",
+      "lab05.py",
+      "--condition",
+      "all",
+      "--profile",
+      "step",
+      "--mapping",
+      "both",
+      "--output-dir",
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\lab_05\\results\\completed_20261109\\comparison"
+    ],
+    [
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\.venv\\Scripts\\python.exe",
+      "lab05.py",
+      "--mapping",
+      "phi-only",
+      "--output-dir",
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\lab_05\\results\\completed_20261109\\phi_only"
+    ],
+    [
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\.venv\\Scripts\\python.exe",
+      "lab05.py",
+      "--mapping",
+      "stride-only",
+      "--output-dir",
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\lab_05\\results\\completed_20261109\\stride_only"
+    ],
+    [
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\.venv\\Scripts\\python.exe",
+      "lab05.py",
+      "--condition",
+      "B2",
+      "--profile",
+      "zero",
+      "--output-dir",
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\lab_05\\results\\completed_20261109\\zero"
+    ],
+    [
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\.venv\\Scripts\\python.exe",
+      "lab05.py",
+      "--condition",
+      "B2",
+      "--profile",
+      "one",
+      "--output-dir",
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\lab_05\\results\\completed_20261109\\one"
+    ],
+    [
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\.venv\\Scripts\\python.exe",
+      "lab05.py",
+      "--condition",
+      "B2",
+      "--profile",
+      "spike",
+      "--output-dir",
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\lab_05\\results\\completed_20261109\\spike"
+    ],
+    [
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\.venv\\Scripts\\python.exe",
+      "lab05.py",
+      "--condition",
+      "all",
+      "--profile",
+      "fault",
+      "--output-dir",
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\lab_05\\results\\completed_20261109\\fault"
+    ],
+    [
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\.venv\\Scripts\\python.exe",
+      "contact_demo.py",
+      "--output-dir",
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\lab_05\\results\\completed_20261109\\contact"
+    ],
+    [
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\.venv\\Scripts\\python.exe",
+      "lab05.py",
+      "--condition",
+      "B2",
+      "--contract",
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\Lab04\\source_snapshot\\handoff_contract.json",
+      "--output-dir",
+      "C:\\Users\\ittip\\Downloads\\RAE67_bio_ins-main\\lab_05\\results\\completed_20261109\\lab04_handoff"
+    ]
+  ],
+  "source_sha256": {
+    ".gitattributes": "5cc4f3bf2ddddf7382610d947cb339b298493feeb8e13291c254edacc18f2d7f",
+    "contact_demo.py": "e672fe7e28fd1e62114302ded8a4b1a7998616807a7c6e3212d38a5ed83fd42a",
+    "contact_report_template.html": "c570065ba1985626729598938485aa18390c9b4ca451edc30efadfbb148a9aaf",
+    "course_model.py": "88ede293fa3ac9ed2fc326ac7427a019a363b313bf8eacd8c7ee8a378f67747c",
+    "handoff_contract.json": "50debd932cc9f548ba2e01fafc2b22476640d276e22c09f6b82090493b4e9fca",
+    "lab05.py": "cf2477146f5e2f11a42ea9e35ad135bf59d0af841ed8aa2c5535fc9e35f5c7c4",
+    "Lab05_Student_Worksheet_TH.docx": "111f35c01445e86a86c29dfc309c542e20a9716c4bf18949c73a2c25df32fc45",
+    "Lab05_Student_Worksheet_TH.pdf": "57f24e153ac3a75f5ecfc0409c14e8d48254aa529b1522ee7f0c707665b97efd",
+    "README.md": "0446d955c87dd45dddcf56091c7acc325a81c94435e088461b53273d3bc595a1",
+    "report_template.html": "8ad1e1850f6696322a80ebb3e72feadcc90a42691edecdccbd20a7b17797269d",
+    "SOURCES.md": "062c520732e6f5ff733c8af769963d5727981f8bdde79fd66299ab2005990931",
+    "worksheet.md": "d594bfbdf97d01008a45b1204990e1dcdcbfb7c4316d54d971251e0f52c96199"
+  },
+  "lab04_controller_sha256": "b604ea36521b90bfd7146aebcf40875d4e46896723939c71f1f52ef02e537f18",
+  "lab04_contract_sha256": "2a6a37d6617973ff67e037a10a924f740c9d746c64db2db25a4f5ba0d0a30686",
+  "lab04_agreement": "600 sequential updates with stimulus step and one NaN; rates B2/B3; all h/r/raw/p/c/b/fault equal",
+  "prediction_sha256": "41b7f2d5279b8df907a96543412515553315be4745f923f9036dd2421377edbe"
+}

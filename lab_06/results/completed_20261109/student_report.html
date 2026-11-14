@@ -1,0 +1,39 @@
+<!doctype html><html lang="th"><meta charset="utf-8"><title>รายงาน Lab06</title><style>body{font-family:"Leelawadee UI",Tahoma,sans-serif;color:#111;max-width:1050px;margin:30px auto;line-height:1.55}h1,h2,h3{color:black}table{border-collapse:collapse;width:100%;font-size:12px;margin:12px 0}td,th{border:1px solid #bbb;padding:6px;vertical-align:top}th{background:#eee}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px}img{max-width:100%}@page{size:A4;margin:16mm} @media print{body{margin:0;font-size:11pt;max-width:none}.page{page-break-after:always}.page:last-child{page-break-after:auto}h2{break-after:avoid}tr{break-inside:avoid}}</style><body><section class="page"><h1>Lab06 FSM และผลการป้องกันสัญญาณรบกวน</h1>
+<p>อิทธิพล แป้นอ้อย / 6752500053 | กลุ่ม: ยังไม่ระบุ | วันที่รัน 09/11/2026</p>
+<p>ผลทั้งหมดเป็น simulation ด้วย virtual clock และ proposed course model ไม่มี learning และยังไม่ได้วัด ROS/DDS หรือการเคลื่อนไหวของหุ่นยนต์จริง</p>
+<h2>Prediction และ protocol</h2>
+<p>C1ควรลดการสลับstateจากnoiseแต่เพิ่มเวลารอfilter; predictionเก็บก่อนรันในPREDICTION_BEFORE_RUN.json. ใช้baselinepolicyเดียวกัน,seeds41/42/43,dt.02s,duration22s,scheduler.04s,7expectedIDsและ10allsource/trial; deadline1s. C1debounce.06s,near.20/.28m,approach.80/.95m; bounds±[.35,.25,.30]rad,slew.8rad/sเหมือนกัน</p>
+<h2>FSM</h2>
+<p>fault→normal,near→afraid,clear→normalจากทุกstate; afraidholdpositiveevents; อื่นtouch→happy,button/approach→interested; interested/happytimeout2s→normal; normalidle6s→sleepy. Priorityfault&gt;near&gt;clear&gt;touch&gt;button&gt;approach&gt;timeout&gt;idle</p>
+<table>
+<tr><th>state</th><th>fault</th><th>near</th><th>clear</th><th>touch</th><th>button</th><th>approach</th><th>timeout</th><th>idle</th></tr>
+<tr><td>normal</td><td>normal</td><td>afraid</td><td>normal</td><td>happy</td><td>interested</td><td>interested</td><td>hold</td><td>sleepy</td></tr>
+<tr><td>interested</td><td>normal</td><td>afraid</td><td>normal</td><td>happy</td><td>interested</td><td>interested</td><td>normal</td><td>hold</td></tr>
+<tr><td>happy</td><td>normal</td><td>afraid</td><td>normal</td><td>happy</td><td>interested</td><td>interested</td><td>normal</td><td>hold</td></tr>
+<tr><td>afraid</td><td>normal</td><td>afraid</td><td>normal</td><td>hold</td><td>hold</td><td>hold</td><td>hold</td><td>hold</td></tr>
+<tr><td>sleepy</td><td>normal</td><td>afraid</td><td>normal</td><td>happy</td><td>interested</td><td>interested</td><td>hold</td><td>hold</td></tr>
+</table>
+<p>normalกลางRGB60/90/140; interestedเอียงยืด.22/.18/.06RGB255/180/0; happyพยักnod=.18sin(2πt)RGB40/220/80; afraidหดก้ม−.22/−.22/−.16RGB230/30/30; sleepy0/−.15/−.20RGB50/40/100. qเป็นradนามธรรม</p>
+<h2>Checker</h2>
+<p>40pairsผ่านbaselineและgroup; ก่อนแก้7failures เช่นinterested+timeoutคืนNone แก้กลับnormal. ตารางเต็มและคำตอบครบในworksheet.md</p></section><section class="page"><h1>ผลทดลองและข้อจำกัด Lab06</h1>
+<table>
+<tr><th>Condition/seed</th><th>All sources</th><th>Both</th><th>≤1s both</th><th>No both</th><th>Max observed s</th><th>State transitions</th></tr>
+<tr><td>C0/41</td><td>10</td><td>7</td><td>7</td><td>3</td><td>0.24</td><td>67</td></tr>
+<tr><td>C1/41</td><td>10</td><td>7</td><td>7</td><td>3</td><td>0.14</td><td>9</td></tr>
+<tr><td>C0/42</td><td>10</td><td>6</td><td>6</td><td>4</td><td>0.18</td><td>72</td></tr>
+<tr><td>C1/42</td><td>10</td><td>7</td><td>7</td><td>3</td><td>0.14</td><td>10</td></tr>
+<tr><td>C0/43</td><td>10</td><td>6</td><td>6</td><td>4</td><td>0.04</td><td>63</td></tr>
+<tr><td>C1/43</td><td>10</td><td>7</td><td>7</td><td>3</td><td>0.14</td><td>9</td></tr>
+</table>
+<img src="comparison_summary.png">
+<p>PrimaryC0=19/21,C1=21/21. transitionsลด58/62/54ครั้ง; C0seed42clear_01ไม่recognize,seed43clear_02no_state_change; missingไม่แทน0. C1สูงสุด.14sทุกseed,C0.24/.18/.04s จึงไม่สรุปC1ช้ากว่าเสมอ</p>
+<h2>ตรวจ latency C1 seed41</h2>
+<table>
+<tr><th>Input</th><th>Source</th><th>Recognized</th><th>Decision/queue</th><th>Apply</th><th>Motion</th><th>RGB</th><th>Both latency s</th></tr>
+<tr><td>button_01</td><td>1.0</td><td>1.1</td><td>1.1</td><td>1.14</td><td>1.14</td><td>1.14</td><td>0.14</td></tr>
+<tr><td>touch_01</td><td>3.0</td><td>3.06</td><td>3.06</td><td>3.1</td><td>3.1</td><td>3.1</td><td>0.1</td></tr>
+</table>
+<p>button1.00→recognize1.10→queue1.10→apply/motion/RGB1.14 ดังนั้นboth=.14s,filter=.10s,queue=.04s. near7→afraid,touch7.06policy_held; clear9→normal; fault11/12เดิมnormalจึงไม่มีonsetใหม่; idle15→sleepy; button18.06→interestedและapply18.10</p>
+<h2>หลักฐานและขอบเขต</h2>
+<p>Replayraw/eventsตรงbyteและSHA; หลักฐานcomparison/metrics.json,events/rawCSV,config,manifest,source_snapshotและanalysis_validation.json. policySHA=0be3de88fc5d9900…;Python/คำสั่งจริงในRUN_MANIFEST.json. รันซ้ำจากlab_06ด้วย python lab06.py --policy student --condition all --repeats 3 --output-dir results/reproduce_01</p>
+<p>เป็นvirtualcommandonsetเท่านั้น ก่อนจริงต้องcalibratejoint/clockและวัดencoder+photodiodeร่วมtrigger; softwareboundsไม่แทนE-stop/driverwatchdog.FSMคงที่ไม่ใช่learning. อ้างอิงREADME.md,course_model.pyและworksheet.md</p></section></body></html>

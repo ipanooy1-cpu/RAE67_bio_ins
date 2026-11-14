@@ -1,0 +1,28 @@
+{
+  "B0": {
+    "distance_m": 2.332678608861308,
+    "command_latency_s": null,
+    "command_recovery_s": null,
+    "updates": 600
+  },
+  "B1": {
+    "distance_m": 2.4684766231562576,
+    "command_latency_s": 0.0,
+    "command_recovery_s": 0.0,
+    "updates": 600
+  },
+  "B2": {
+    "distance_m": 2.4735228404299514,
+    "command_latency_s": 0.15000000000000036,
+    "command_recovery_s": 2.8500000000000014,
+    "updates": 600
+  },
+  "B3": {
+    "distance_m": 2.4843831194553245,
+    "command_latency_s": 0.15000000000000036,
+    "command_recovery_s": 3.8000000000000007,
+    "updates": 600
+  }
+}
+Report: C:\Users\ittip\Downloads\RAE67_bio_ins-main\lab_05\results\completed_20261109\stride_only\report.html
+

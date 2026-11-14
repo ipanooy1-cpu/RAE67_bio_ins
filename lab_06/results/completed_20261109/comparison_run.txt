@@ -1,0 +1,8 @@
+C0 r01 seed=41: transitions=67; both onset=7/10; observed <=1s=7; no both onset=3; max observed=0.240s
+C1 r01 seed=41: transitions=9; both onset=7/10; observed <=1s=7; no both onset=3; max observed=0.140s
+C0 r02 seed=42: transitions=72; both onset=6/10; observed <=1s=6; no both onset=4; max observed=0.180s
+C1 r02 seed=42: transitions=10; both onset=7/10; observed <=1s=7; no both onset=3; max observed=0.140s
+C0 r03 seed=43: transitions=63; both onset=6/10; observed <=1s=6; no both onset=4; max observed=0.040s
+C1 r03 seed=43: transitions=9; both onset=7/10; observed <=1s=7; no both onset=3; max observed=0.140s
+Offline report: C:\Users\ittip\Downloads\RAE67_bio_ins-main\lab_06\results\completed_20261109\comparison\report.html
+

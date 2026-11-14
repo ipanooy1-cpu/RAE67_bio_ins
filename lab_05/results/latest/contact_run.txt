@@ -1,0 +1,34 @@
+{
+  "matched": {
+    "valid_rows": 551,
+    "mae": 0.0,
+    "mean_sif": 0.0
+  },
+  "gain-offset": {
+    "valid_rows": 551,
+    "mae": 0.1628437878668761,
+    "mean_sif": 1.3820233075528691e-17
+  },
+  "mixed-delay": {
+    "valid_rows": 551,
+    "mae": 0.22600735106701011,
+    "mean_sif": 0.4999953397685721
+  },
+  "all-inverted": {
+    "valid_rows": 551,
+    "mae": 0.6313751514675049,
+    "mean_sif": 5.271635296851151e-18
+  },
+  "constant": {
+    "valid_rows": 0,
+    "mae": 0.0,
+    "mean_sif": null
+  },
+  "fault": {
+    "valid_rows": 501,
+    "mae": 0.0,
+    "mean_sif": 0.0
+  }
+}
+Report: C:\Users\ittip\Downloads\RAE67_bio_ins-main\lab_05\results\completed_20261109\contact\report.html
+
