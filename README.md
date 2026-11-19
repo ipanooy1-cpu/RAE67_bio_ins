@@ -1,6 +1,6 @@
 # งานแลปและโปรเจกต์หุ่นโคมไฟ
 
-- [ส่งงาน_project_lamp](ส่งงาน_project_lamp/README.md) (ชื่อสมาชิกอยู่ในไฟล์ README)
+- [ส่งงานกลุ่ม6_project_lamp](ส่งงานกลุ่ม6_project_lamp/README.md) (ชื่อสมาชิกอยู่ในไฟล์ README)
 - [lamp_sim](lamp_sim/README.md) (ชื่อสมาชิกอยู่ในไฟล์ README)
 
 งานแลปอยู่ใน lab_02 ถึง lab_07
