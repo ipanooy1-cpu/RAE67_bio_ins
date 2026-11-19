@@ -95,3 +95,8 @@ ros2 topic pub --once /lamp/personality_mode std_msgs/msg/String "{data: neutral
 -นาย ฟุรกร สาเเม 6752500100
 -นาย ภานุพร มาศรี 6752500118
 -นาย จิรยุส พลอยพริ้ง 6752500401
+
+
+## สอนใช้หุ่นยนต์โคมไฟ
+
+[ชมวิดีโอสอนใช้งานบน YouTube](https://youtu.be/pqEbV2TlX6A)
