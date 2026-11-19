@@ -1,0 +1,220 @@
+<?xml version="1.0"?>
+<robot name="lamp_cad_parts_preview">
+  <link name="base_link"/>
+  <link name="cad_part_00">
+    <visual>
+      <origin xyz="0.000011 -0.000000 -0.004500" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_preview/meshes/0000_aecesry_1.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="silver"><color rgba="0.75 0.80 0.87 1"/></material>
+    </visual>
+  </link>
+  <joint name="preview_fixed_00" type="fixed">
+    <parent link="base_link"/>
+    <child link="cad_part_00"/>
+    <origin xyz="-0.6900 0.0000 0.0" rpy="0 0 0"/>
+  </joint>
+  <link name="cad_part_01">
+    <visual>
+      <origin xyz="0.200000 -0.000000 -0.002250" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_preview/meshes/0002_base2.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="silver"><color rgba="0.75 0.80 0.87 1"/></material>
+    </visual>
+  </link>
+  <joint name="preview_fixed_01" type="fixed">
+    <parent link="base_link"/>
+    <child link="cad_part_01"/>
+    <origin xyz="-0.2300 0.0000 0.0" rpy="0 0 0"/>
+  </joint>
+  <link name="cad_part_02">
+    <visual>
+      <origin xyz="-0.149982 0.165803 0.020000" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_preview/meshes/0003_acesry.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="silver"><color rgba="0.75 0.80 0.87 1"/></material>
+    </visual>
+  </link>
+  <joint name="preview_fixed_02" type="fixed">
+    <parent link="base_link"/>
+    <child link="cad_part_02"/>
+    <origin xyz="0.2300 0.0000 0.0" rpy="0 0 0"/>
+  </joint>
+  <link name="cad_part_03">
+    <visual>
+      <origin xyz="0.170910 -0.120715 0.029125" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_preview/meshes/0005_servo.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="silver"><color rgba="0.75 0.80 0.87 1"/></material>
+    </visual>
+  </link>
+  <joint name="preview_fixed_03" type="fixed">
+    <parent link="base_link"/>
+    <child link="cad_part_03"/>
+    <origin xyz="0.6900 0.0000 0.0" rpy="0 0 0"/>
+  </joint>
+  <link name="cad_part_04">
+    <visual>
+      <origin xyz="0.155910 -0.120715 0.029125" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_preview/meshes/0006_servo2.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="silver"><color rgba="0.75 0.80 0.87 1"/></material>
+    </visual>
+  </link>
+  <joint name="preview_fixed_04" type="fixed">
+    <parent link="base_link"/>
+    <child link="cad_part_04"/>
+    <origin xyz="-0.6900 -0.3600 0.0" rpy="0 0 0"/>
+  </joint>
+  <link name="cad_part_05">
+    <visual>
+      <origin xyz="-0.250000 0.011064 0.025000" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_preview/meshes/0009_arm3.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="silver"><color rgba="0.75 0.80 0.87 1"/></material>
+    </visual>
+  </link>
+  <joint name="preview_fixed_05" type="fixed">
+    <parent link="base_link"/>
+    <child link="cad_part_05"/>
+    <origin xyz="-0.2300 -0.3600 0.0" rpy="0 0 0"/>
+  </joint>
+  <link name="cad_part_06">
+    <visual>
+      <origin xyz="-0.012502 -0.000000 0.016650" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_preview/meshes/0010_ac2.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="silver"><color rgba="0.75 0.80 0.87 1"/></material>
+    </visual>
+  </link>
+  <joint name="preview_fixed_06" type="fixed">
+    <parent link="base_link"/>
+    <child link="cad_part_06"/>
+    <origin xyz="0.2300 -0.3600 0.0" rpy="0 0 0"/>
+  </joint>
+  <link name="cad_part_07">
+    <visual>
+      <origin xyz="-0.012502 -0.000000 -0.015800" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_preview/meshes/0011_ac1.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="silver"><color rgba="0.75 0.80 0.87 1"/></material>
+    </visual>
+  </link>
+  <joint name="preview_fixed_07" type="fixed">
+    <parent link="base_link"/>
+    <child link="cad_part_07"/>
+    <origin xyz="0.6900 -0.3600 0.0" rpy="0 0 0"/>
+  </joint>
+  <link name="cad_part_08">
+    <visual>
+      <origin xyz="-0.000000 -0.000000 -0.000000" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_preview/meshes/0024_Servo_SC15.f3d.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="silver"><color rgba="0.75 0.80 0.87 1"/></material>
+    </visual>
+  </link>
+  <joint name="preview_fixed_08" type="fixed">
+    <parent link="base_link"/>
+    <child link="cad_part_08"/>
+    <origin xyz="-0.6900 -0.7200 0.0" rpy="0 0 0"/>
+  </joint>
+  <link name="cad_part_09">
+    <visual>
+      <origin xyz="-0.000000 -0.000000 -0.000000" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_preview/meshes/0027_Servo_SC15.f3d.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="silver"><color rgba="0.75 0.80 0.87 1"/></material>
+    </visual>
+  </link>
+  <joint name="preview_fixed_09" type="fixed">
+    <parent link="base_link"/>
+    <child link="cad_part_09"/>
+    <origin xyz="-0.2300 -0.7200 0.0" rpy="0 0 0"/>
+  </joint>
+  <link name="cad_part_10">
+    <visual>
+      <origin xyz="0.221450 0.005939 0.064883" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_preview/meshes/0029_aecesry.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="silver"><color rgba="0.75 0.80 0.87 1"/></material>
+    </visual>
+  </link>
+  <joint name="preview_fixed_10" type="fixed">
+    <parent link="base_link"/>
+    <child link="cad_part_10"/>
+    <origin xyz="0.2300 -0.7200 0.0" rpy="0 0 0"/>
+  </joint>
+  <link name="cad_part_11">
+    <visual>
+      <origin xyz="0.221450 0.005939 0.064883" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_preview/meshes/0030_aecesry.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="silver"><color rgba="0.75 0.80 0.87 1"/></material>
+    </visual>
+  </link>
+  <joint name="preview_fixed_11" type="fixed">
+    <parent link="base_link"/>
+    <child link="cad_part_11"/>
+    <origin xyz="0.6900 -0.7200 0.0" rpy="0 0 0"/>
+  </joint>
+  <link name="cad_part_12">
+    <visual>
+      <origin xyz="-0.012502 -0.000000 0.016650" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_preview/meshes/0033_ac2.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="silver"><color rgba="0.75 0.80 0.87 1"/></material>
+    </visual>
+  </link>
+  <joint name="preview_fixed_12" type="fixed">
+    <parent link="base_link"/>
+    <child link="cad_part_12"/>
+    <origin xyz="-0.6900 -1.0800 0.0" rpy="0 0 0"/>
+  </joint>
+  <link name="cad_part_13">
+    <visual>
+      <origin xyz="-0.012502 -0.000000 -0.015800" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_preview/meshes/0034_ac1.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="silver"><color rgba="0.75 0.80 0.87 1"/></material>
+    </visual>
+  </link>
+  <joint name="preview_fixed_13" type="fixed">
+    <parent link="base_link"/>
+    <child link="cad_part_13"/>
+    <origin xyz="-0.2300 -1.0800 0.0" rpy="0 0 0"/>
+  </joint>
+  <link name="cad_part_14">
+    <visual>
+      <origin xyz="-0.012502 -0.000000 0.016650" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_preview/meshes/0046_ac2.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="silver"><color rgba="0.75 0.80 0.87 1"/></material>
+    </visual>
+  </link>
+  <joint name="preview_fixed_14" type="fixed">
+    <parent link="base_link"/>
+    <child link="cad_part_14"/>
+    <origin xyz="0.2300 -1.0800 0.0" rpy="0 0 0"/>
+  </joint>
+  <link name="cad_part_15">
+    <visual>
+      <origin xyz="-0.012502 -0.000000 -0.015800" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_preview/meshes/0047_ac1.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="silver"><color rgba="0.75 0.80 0.87 1"/></material>
+    </visual>
+  </link>
+  <joint name="preview_fixed_15" type="fixed">
+    <parent link="base_link"/>
+    <child link="cad_part_15"/>
+    <origin xyz="0.6900 -1.0800 0.0" rpy="0 0 0"/>
+  </joint>
+  <link name="cad_part_16">
+    <visual>
+      <origin xyz="-0.012502 -0.000000 0.016650" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_preview/meshes/0059_ac2.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="silver"><color rgba="0.75 0.80 0.87 1"/></material>
+    </visual>
+  </link>
+  <joint name="preview_fixed_16" type="fixed">
+    <parent link="base_link"/>
+    <child link="cad_part_16"/>
+    <origin xyz="-0.6900 -1.4400 0.0" rpy="0 0 0"/>
+  </joint>
+  <link name="cad_part_17">
+    <visual>
+      <origin xyz="-0.012502 -0.000000 -0.015800" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_preview/meshes/0060_ac1.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="silver"><color rgba="0.75 0.80 0.87 1"/></material>
+    </visual>
+  </link>
+  <joint name="preview_fixed_17" type="fixed">
+    <parent link="base_link"/>
+    <child link="cad_part_17"/>
+    <origin xyz="-0.2300 -1.4400 0.0" rpy="0 0 0"/>
+  </joint>
+</robot>

@@ -1,0 +1,16 @@
+ftservo-python-sdk
+pyserial>=3.5
+mediapipe
+opencv-contrib-python
+numpy
+Pillow
+# Optional: for GPIO / LED on Raspberry Pi (install via apt if preferred)
+gpiozero>=2.0
+
+# Optional: addressable 3-wire WS2812/NeoPixel through Pi 5 hardware SPI
+adafruit-blinka
+adafruit-circuitpython-neopixel-spi
+
+# For 3-wire WS2812 on Pi 5 GPIO12 / header pin 32 via RP1 PIO
+Adafruit-Blinka-Raspberry-Pi5-Neopixel
+adafruit-circuitpython-pixelbuf

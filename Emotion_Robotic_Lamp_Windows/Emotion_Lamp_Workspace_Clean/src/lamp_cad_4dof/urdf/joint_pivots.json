@@ -1,0 +1,97 @@
+{
+  "note": "Pivot XYZ are geometric estimates from Final STL, not measured Fusion joint coordinates. Units in meters in ROS, original STL millimeters.",
+  "cad_frame_to_ros": {
+    "rpy_rad": [
+      3.141592653589793,
+      0,
+      0
+    ],
+    "xyz_m": [
+      0.0,
+      0.0,
+      0.055
+    ]
+  },
+  "joints": [
+    {
+      "name": "joint1",
+      "parent": "base_link",
+      "child": "base2_link",
+      "axis": "0 0 1",
+      "pivot_cad_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pivot_ros_m": [
+        0.0,
+        0.0,
+        0.055
+      ],
+      "limits_rad": [
+        -1.05,
+        1.05
+      ]
+    },
+    {
+      "name": "joint2",
+      "parent": "base2_link",
+      "child": "arm1_link",
+      "axis": "1 0 0",
+      "pivot_cad_mm": [
+        0.0,
+        0.0,
+        -40.5
+      ],
+      "pivot_ros_m": [
+        0.0,
+        0.0,
+        0.0955
+      ],
+      "limits_rad": [
+        -1.3,
+        1.3
+      ]
+    },
+    {
+      "name": "joint3",
+      "parent": "arm1_link",
+      "child": "arm3_link",
+      "axis": "1 0 0",
+      "pivot_cad_mm": [
+        0.0,
+        -129.45,
+        -164.1
+      ],
+      "pivot_ros_m": [
+        0.0,
+        0.12944999999999998,
+        0.2191
+      ],
+      "limits_rad": [
+        -1.3,
+        1.3
+      ]
+    },
+    {
+      "name": "joint4",
+      "parent": "arm3_link",
+      "child": "head2_link",
+      "axis": "1 0 0",
+      "pivot_cad_mm": [
+        -0.5,
+        -58.8,
+        -306.4
+      ],
+      "pivot_ros_m": [
+        -0.0005,
+        0.0588,
+        0.3614
+      ],
+      "limits_rad": [
+        -1.3,
+        1.3
+      ]
+    }
+  ]
+}

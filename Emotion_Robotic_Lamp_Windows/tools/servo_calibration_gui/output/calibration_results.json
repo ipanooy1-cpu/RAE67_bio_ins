@@ -1,0 +1,18 @@
+{
+  "directions": {
+    "0": {
+      "raw_increase_motion": "ขวา"
+    },
+    "1": {
+      "raw_increase_motion": "ลดลง"
+    },
+    "2": {
+      "raw_increase_motion": "งอเข้า"
+    },
+    "3": {
+      "raw_increase_motion": "เงยขึ้น"
+    }
+  },
+  "mode": "real",
+  "updated_at": "2026-11-11T03:31:23+07:00"
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "enabled": true,
+  "mode": "ws2812_pio",
+  "mono_bcm": null,
+  "red_bcm": null,
+  "green_bcm": null,
+  "blue_bcm": null,
+  "active_high": true,
+  "data_bcm": 12,
+  "pixel_count": 1,
+  "pixel_order": "GRB",
+  "max_brightness": 0.25
+}

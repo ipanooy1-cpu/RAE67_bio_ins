@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<robot name="lamp_cad_three_part_alignment">
+  <link name="base_link"/>
+  <link name="base_visual">
+    <visual>
+      <!-- Mesh vertices in original Fusion-exported coordinates, millimeters. -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_assembly_preview/meshes/Base1.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="base_visual_color"><color rgba="0.72 0.76 0.84 1"/></material>
+    </visual>
+  </link>
+  <joint name="base_to_base_visual" type="fixed">
+    <parent link="base_link"/>
+    <child link="base_visual"/>
+    <!-- Shared CAD origin; rotate 180 deg X so negative CAD Z becomes upright. -->
+    <origin xyz="0 0 0.065" rpy="3.141592653589793 0 0"/>
+  </joint>
+  <link name="arm1_visual">
+    <visual>
+      <!-- Mesh vertices in original Fusion-exported coordinates, millimeters. -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_assembly_preview/meshes/arm1.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="arm1_visual_color"><color rgba="0.42 0.72 0.95 1"/></material>
+    </visual>
+  </link>
+  <joint name="base_to_arm1_visual" type="fixed">
+    <parent link="base_link"/>
+    <child link="arm1_visual"/>
+    <!-- Shared CAD origin; rotate 180 deg X so negative CAD Z becomes upright. -->
+    <origin xyz="0 0 0.065" rpy="3.141592653589793 0 0"/>
+  </joint>
+  <link name="head2_visual">
+    <visual>
+      <!-- Mesh vertices in original Fusion-exported coordinates, millimeters. -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://lamp_cad_assembly_preview/meshes/head2.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="head2_visual_color"><color rgba="0.94 0.65 0.36 1"/></material>
+    </visual>
+  </link>
+  <joint name="base_to_head2_visual" type="fixed">
+    <parent link="base_link"/>
+    <child link="head2_visual"/>
+    <!-- Shared CAD origin; rotate 180 deg X so negative CAD Z becomes upright. -->
+    <origin xyz="0 0 0.065" rpy="3.141592653589793 0 0"/>
+  </joint>
+</robot>

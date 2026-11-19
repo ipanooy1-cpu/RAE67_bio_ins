@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.8)
+project(lamp_cad_preview)
+find_package(ament_cmake REQUIRED)
+install(DIRECTORY meshes urdf launch rviz DESTINATION share/${PROJECT_NAME})
+install(FILES assembly_manifest.json DESTINATION share/${PROJECT_NAME})
+ament_package()

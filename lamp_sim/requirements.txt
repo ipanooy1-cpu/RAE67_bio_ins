@@ -1,0 +1,2 @@
+# Required only for Python graph display; the JSON exporter uses the standard library.
+matplotlib>=3.8,<4

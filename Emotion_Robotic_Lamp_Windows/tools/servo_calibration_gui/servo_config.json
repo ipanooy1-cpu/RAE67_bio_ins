@@ -1,0 +1,46 @@
+{
+  "port": "COM8",
+  "baud": 1000000,
+  "default_speed": 50,
+  "allowed_speeds": [20, 50, 100],
+  "default_step": 10,
+  "allowed_steps": [1, 5, 10, 20],
+  "servos": [
+    {
+      "id": 0,
+      "name": "ฐาน",
+      "safe_min": 0,
+      "safe_max": 870,
+      "center": 410,
+      "home": 404,
+      "direction_labels": ["ซ้าย", "ขวา"]
+    },
+    {
+      "id": 1,
+      "name": "ไหล่",
+      "safe_min": 120,
+      "safe_max": 940,
+      "center": 566,
+      "home": 271,
+      "direction_labels": ["ยกขึ้น", "ลดลง"]
+    },
+    {
+      "id": 2,
+      "name": "ศอก",
+      "safe_min": 165,
+      "safe_max": 1023,
+      "center": 593,
+      "home": 946,
+      "direction_labels": ["งอเข้า", "กางออก"]
+    },
+    {
+      "id": 3,
+      "name": "หัว",
+      "safe_min": 0,
+      "safe_max": 720,
+      "center": 176,
+      "home": 0,
+      "direction_labels": ["ก้มลง", "เงยขึ้น"]
+    }
+  ]
+}

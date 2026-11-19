@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.8)
+project(lamp_cad_4dof)
+find_package(ament_cmake REQUIRED)
+install(DIRECTORY meshes urdf launch rviz reference DESTINATION share/${PROJECT_NAME})
+install(PROGRAMS scripts/joint_state_adapter.py DESTINATION lib/${PROJECT_NAME})
+ament_package()

@@ -1,0 +1,25 @@
+{
+  "python": "3.13.7",
+  "dependencies": {
+    "mediapipe": "1.2.2",
+    "opencv-contrib-python": "5.0.0.93",
+    "numpy": "2.5.4",
+    "matplotlib": "3.11.2"
+  },
+  "model_load_and_blank_image": "PASS",
+  "camera": "not opened or tested",
+  "ROS2": "not installed/tested on this Windows machine",
+  "servo": "not connected or driven",
+  "expression_mapping": {
+    "happy": "Happy",
+    "sad": "Sad",
+    "angry": "Confused",
+    "surprised": "Confused",
+    "neutral": "Neutral"
+  },
+  "core_tests": "11/11 PASS",
+  "syntax_compile": "PASS for all package modules",
+  "replay": "45s, 901 samples, all 4 modes, missing-face and stale cases",
+  "pip_check": "No broken requirements found",
+  "run_entry": "test_face_lamp.py for VS Code; lamp_node for ROS"
+}

@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<robot name="emotion_robotic_lamp"
+       xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Materials -->
+  <material name="black">
+    <color rgba="0.12 0.12 0.12 1"/>
+  </material>
+
+  <material name="silver">
+    <color rgba="0.65 0.65 0.65 1"/>
+  </material>
+
+  <material name="white">
+    <color rgba="0.95 0.95 0.95 1"/>
+  </material>
+
+  <!-- Base -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0.02"/>
+      <geometry>
+        <cylinder radius="0.09" length="0.04"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+  </link>
+
+  <!-- Joint 1: Base Yaw -->
+  <link name="yaw_link">
+    <visual>
+      <origin xyz="0 0 0.02"/>
+      <geometry>
+        <cylinder radius="0.06" length="0.04"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+  </link>
+
+  <joint name="joint1_base" type="revolute">
+    <parent link="base_link"/>
+    <child link="yaw_link"/>
+    <origin xyz="0 0 0.04"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.14" upper="3.14"
+           effort="10" velocity="1.5"/>
+  </joint>
+
+  <!-- Arm 1 -->
+  <link name="arm1_link">
+    <visual>
+      <origin xyz="0 0.11 0"/>
+      <geometry>
+        <box size="0.04 0.22 0.04"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+  </link>
+
+  <joint name="joint2_shoulder" type="revolute">
+    <parent link="yaw_link"/>
+    <child link="arm1_link"/>
+    <origin xyz="0 0 0.06" rpy="1.57079632679 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-1.57" upper="1.57"
+           effort="10" velocity="1.0"/>
+  </joint>
+
+  <!-- Arm 2 -->
+  <link name="arm2_link">
+    <visual>
+      <origin xyz="0 0.10 0"/>
+      <geometry>
+        <box size="0.035 0.20 0.035"/>
+      </geometry>
+      <material name="silver"/>
+    </visual>
+  </link>
+
+  <joint name="joint3_elbow" type="revolute">
+    <parent link="arm1_link"/>
+    <child link="arm2_link"/>
+    <origin xyz="0 0.22 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-2.0" upper="2.0"
+           effort="10" velocity="1.0"/>
+  </joint>
+
+  <!-- Lamp Head -->
+  <link name="lamp_head">
+    <visual>
+      <origin xyz="0 0.06 0"/>
+      <geometry>
+        <box size="0.16 0.12 0.08"/>
+      </geometry>
+      <material name="white"/>
+    </visual>
+  </link>
+
+  <joint name="joint4_head" type="revolute">
+    <parent link="arm2_link"/>
+    <child link="lamp_head"/>
+    <origin xyz="0 0.20 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-1.2" upper="1.2"
+           effort="5" velocity="1.0"/>
+  </joint>
+
+  <!-- Camera -->
+  <link name="camera_link"/>
+
+  <joint name="camera_mount" type="fixed">
+    <parent link="lamp_head"/>
+    <child link="camera_link"/>
+    <origin xyz="0 0.12 0.04" rpy="0 0 0"/>
+  </joint>
+
+</robot>

@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<package format="3"><name>lamp_cad_full_preview</name><version>0.0.1</version><description>CAD staging only, not a 4DOF robot</description><maintainer email="robot@example.com">Lamp developer</maintainer><license>Apache-2.0</license><buildtool_depend>ament_cmake</buildtool_depend><exec_depend>robot_state_publisher</exec_depend><exec_depend>launch_ros</exec_depend><exec_depend>launch</exec_depend><export><build_type>ament_cmake</build_type></export></package>

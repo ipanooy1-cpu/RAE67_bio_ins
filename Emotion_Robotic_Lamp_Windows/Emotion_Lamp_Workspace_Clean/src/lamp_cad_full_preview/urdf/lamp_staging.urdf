@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<robot name="lamp_cad_full_staging">
+<link name="base_link"/>
+<link name="Base1_visual"><visual><geometry><mesh filename="package://lamp_cad_full_preview/meshes/Base1.stl" scale="0.001 0.001 0.001"/></geometry><material name="Base1_color"><color rgba="0.72 0.76 0.84 1"/></material></visual></link>
+<joint name="fixed_Base1" type="fixed"><parent link="base_link"/><child link="Base1_visual"/><origin xyz="0 0 0.065" rpy="3.141592653589793 0 0"/></joint>
+<link name="arm1_visual"><visual><geometry><mesh filename="package://lamp_cad_full_preview/meshes/arm1.stl" scale="0.001 0.001 0.001"/></geometry><material name="arm1_color"><color rgba="0.42 0.72 0.95 1"/></material></visual></link>
+<joint name="fixed_arm1" type="fixed"><parent link="base_link"/><child link="arm1_visual"/><origin xyz="0 0 0.065" rpy="3.141592653589793 0 0"/></joint>
+<link name="head2_visual"><visual><geometry><mesh filename="package://lamp_cad_full_preview/meshes/head2.stl" scale="0.001 0.001 0.001"/></geometry><material name="head2_color"><color rgba="0.94 0.65 0.36 1"/></material></visual></link>
+<joint name="fixed_head2" type="fixed"><parent link="base_link"/><child link="head2_visual"/><origin xyz="0 0 0.065" rpy="3.141592653589793 0 0"/></joint>
+<link name="base2_stage"><visual><geometry><mesh filename="package://lamp_cad_full_preview/meshes/base2.stl" scale="0.001 0.001 0.001"/></geometry><material name="base2_color"><color rgba="0.68 0.88 0.75 1"/></material></visual></link>
+<joint name="fixed_base2_stage" type="fixed"><parent link="base_link"/><child link="base2_stage"/><origin xyz="0.650 -0.450 0.3" rpy="3.141592653589793 0 0"/></joint>
+<link name="base1ac_stage"><visual><geometry><mesh filename="package://lamp_cad_full_preview/meshes/base1ac.stl" scale="0.001 0.001 0.001"/></geometry><material name="base1ac_color"><color rgba="0.68 0.88 0.75 1"/></material></visual></link>
+<joint name="fixed_base1ac_stage" type="fixed"><parent link="base_link"/><child link="base1ac_stage"/><origin xyz="0.850 -0.450 0.3" rpy="3.141592653589793 0 0"/></joint>
+<link name="arm3_stage"><visual><geometry><mesh filename="package://lamp_cad_full_preview/meshes/arm3.stl" scale="0.001 0.001 0.001"/></geometry><material name="arm3_color"><color rgba="0.68 0.88 0.75 1"/></material></visual></link>
+<joint name="fixed_arm3_stage" type="fixed"><parent link="base_link"/><child link="arm3_stage"/><origin xyz="1.050 -0.450 0.3" rpy="3.141592653589793 0 0"/></joint>
+<link name="servo1_stage"><visual><geometry><mesh filename="package://lamp_cad_full_preview/meshes/servo1.stl" scale="0.001 0.001 0.001"/></geometry><material name="servo1_color"><color rgba="0.68 0.88 0.75 1"/></material></visual></link>
+<joint name="fixed_servo1_stage" type="fixed"><parent link="base_link"/><child link="servo1_stage"/><origin xyz="1.250 -0.450 0.3" rpy="3.141592653589793 0 0"/></joint>
+<link name="arm1ac_stage"><visual><geometry><mesh filename="package://lamp_cad_full_preview/meshes/arm1ac.stl" scale="0.001 0.001 0.001"/></geometry><material name="arm1ac_color"><color rgba="0.68 0.88 0.75 1"/></material></visual></link>
+<joint name="fixed_arm1ac_stage" type="fixed"><parent link="base_link"/><child link="arm1ac_stage"/><origin xyz="1.450 -0.450 0.3" rpy="3.141592653589793 0 0"/></joint>
+<link name="servo2_stage"><visual><geometry><mesh filename="package://lamp_cad_full_preview/meshes/servo2.stl" scale="0.001 0.001 0.001"/></geometry><material name="servo2_color"><color rgba="0.68 0.88 0.75 1"/></material></visual></link>
+<joint name="fixed_servo2_stage" type="fixed"><parent link="base_link"/><child link="servo2_stage"/><origin xyz="0.650 -0.690 0.3" rpy="3.141592653589793 0 0"/></joint>
+<link name="servo4_stage"><visual><geometry><mesh filename="package://lamp_cad_full_preview/meshes/servo4.stl" scale="0.001 0.001 0.001"/></geometry><material name="servo4_color"><color rgba="0.68 0.88 0.75 1"/></material></visual></link>
+<joint name="fixed_servo4_stage" type="fixed"><parent link="base_link"/><child link="servo4_stage"/><origin xyz="0.850 -0.690 0.3" rpy="3.141592653589793 0 0"/></joint>
+<link name="servo5_stage"><visual><geometry><mesh filename="package://lamp_cad_full_preview/meshes/servo5.stl" scale="0.001 0.001 0.001"/></geometry><material name="servo5_color"><color rgba="0.68 0.88 0.75 1"/></material></visual></link>
+<joint name="fixed_servo5_stage" type="fixed"><parent link="base_link"/><child link="servo5_stage"/><origin xyz="1.050 -0.690 0.3" rpy="3.141592653589793 0 0"/></joint>
+<link name="arm_servo_ac1_stage"><visual><geometry><mesh filename="package://lamp_cad_full_preview/meshes/arm_servo_ac1.stl" scale="0.001 0.001 0.001"/></geometry><material name="arm_servo_ac1_color"><color rgba="0.68 0.88 0.75 1"/></material></visual></link>
+<joint name="fixed_arm_servo_ac1_stage" type="fixed"><parent link="base_link"/><child link="arm_servo_ac1_stage"/><origin xyz="1.250 -0.690 0.3" rpy="3.141592653589793 0 0"/></joint>
+<link name="arm_servo_ac2_stage"><visual><geometry><mesh filename="package://lamp_cad_full_preview/meshes/arm_servo_ac2.stl" scale="0.001 0.001 0.001"/></geometry><material name="arm_servo_ac2_color"><color rgba="0.68 0.88 0.75 1"/></material></visual></link>
+<joint name="fixed_arm_servo_ac2_stage" type="fixed"><parent link="base_link"/><child link="arm_servo_ac2_stage"/><origin xyz="1.450 -0.690 0.3" rpy="3.141592653589793 0 0"/></joint>
+</robot>

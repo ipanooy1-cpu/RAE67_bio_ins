@@ -1,0 +1,676 @@
+EMOTION ROBOTIC LAMP - COMPLETE ROBOT DATA & AI HANDOFF
+========================================================
+
+จุดประสงค์ของไฟล์
+-----------------
+ไฟล์นี้เป็นแหล่งข้อมูลหลัก (source of truth) สำหรับหุ่น Emotion Robotic Lamp
+ใช้จดข้อมูลจริงจากการประกอบ การวัด และการทดสอบ เพื่อให้คนหรือ AI อ่านแล้ว
+สามารถสร้างโค้ดควบคุมฮาร์ดแวร์ต่อได้โดยไม่ต้องเดาค่าของหุ่น
+
+กติกาสำหรับคนและ AI ที่อ่านไฟล์นี้
+----------------------------------
+1. ห้ามเดาค่าที่เว้นว่างไว้
+2. ห้ามใช้ค่าจาก CAD เป็นค่าฮาร์ดแวร์จริงจนกว่าจะวัดและยืนยัน
+3. ค่า [KNOWN] คือข้อมูลที่ยืนยันแล้ว
+4. ค่า [TO_MEASURE] ต้องวัดจากหุ่นจริง
+5. ค่า [TO_DECIDE] ต้องให้เจ้าของหุ่นตัดสินใจ
+6. ทุกค่าต้องระบุหน่วย เช่น raw_count, degree, radian, volt, ampere, °C
+7. ทุกครั้งที่แก้ค่าคาลิเบรต ให้เพิ่มบันทึกใน CHANGE HISTORY ท้ายไฟล์
+
+
+1. PROJECT STATUS
+-----------------
+[KNOWN] ชื่อโครงการ          : Emotion Robotic Lamp
+[KNOWN] จำนวนองศาอิสระ      : 4 DOF
+[KNOWN] สถานะกลไก           : ประกอบหุ่นจริงเสร็จแล้ว
+[KNOWN] ขั้นตอนปัจจุบัน      : เก็บค่าฮาร์ดแวร์และคาลิเบรตบนคอม Windows
+[KNOWN] การใช้งานระยะแรก    : ต่อ USB กับคอมโดยตรง
+[KNOWN] แผนระยะถัดไป         : ย้ายระบบควบคุมและ ROS ไป Raspberry Pi
+[TO_DECIDE] Raspberry Pi รุ่น:
+[TO_DECIDE] ระบบปฏิบัติการ Pi:
+[TO_DECIDE] ROS 2 เวอร์ชันบน Pi:
+
+
+2. HARDWARE SUMMARY
+-------------------
+[KNOWN] Servo model          : Feetech SCS15
+[KNOWN] จำนวน Servo          : 4
+[KNOWN] ประเภทการสื่อสาร     : TTL Half-Duplex Serial Bus
+[KNOWN] USB-to-Serial        : USB-Enhanced-SERIAL CH343
+[KNOWN] พอร์ตบนคอมทดสอบ     : COM8
+[KNOWN] Baud rate            : 1000000
+[KNOWN] Parity               : NONE (ตั้งค่าในโปรแกรม FD)
+[KNOWN] ช่วงตำแหน่ง nominal : 0 - 1023 raw_count
+[KNOWN] ช่วงมุม nominal      : 180 degree
+[KNOWN] ความละเอียด nominal : 1024 steps / 180 degree
+[KNOWN] โปรแกรมตั้งค่า       : Feetech FD Debug Software V1.9.8.5
+[KNOWN] ตำแหน่งโปรแกรม FD    : tools/FeetechFD/FD1985-250729/FD.exe
+[KNOWN] ID ที่ FD ตรวจพบล่าสุด: 0, 1, 2, 3
+[KNOWN] วันที่อ่านค่าจาก FD   : 2026-11-11
+
+[TO_MEASURE] Data bits       :
+[TO_MEASURE] Stop bits       :
+[TO_MEASURE] รุ่น/ชื่อบอร์ดวงจรที่ใช้กับ CH343:
+[TO_MEASURE] หมายเลขหรือ revision ของวงจร:
+[TO_MEASURE] ความยาวสาย USB:
+[TO_MEASURE] ความยาวสายบัส Servo:
+
+
+3. SERVO ID AND JOINT MAP
+-------------------------
+[KNOWN] ID 0 = ฐาน (Base)
+        ROS joint name       : joint1_base
+        CAD joint name       : joint1
+        หน้าที่               : หมุนฐานซ้าย/ขวา
+        แกนจากแบบจำลอง       : Z
+
+[KNOWN] ID 1 = ไหล่ (Shoulder)
+        ROS joint name       : joint2_shoulder
+        CAD joint name       : joint2
+        หน้าที่               : ยก/ก้มแขนท่อนแรก
+        แกนจากแบบจำลอง       : X
+
+[KNOWN] ID 2 = ศอก (Elbow)
+        ROS joint name       : joint3_elbow
+        CAD joint name       : joint3
+        หน้าที่               : พับ/เหยียดแขน
+        แกนจากแบบจำลอง       : X
+
+[KNOWN] ID 3 = หัว (Head)
+        ROS joint name       : joint4_head
+        CAD joint name       : joint4
+        หน้าที่               : ก้ม/เงยหัวโคม
+        แกนจากแบบจำลอง       : X
+        หมายเหตุ             : เปลี่ยนจาก ID 4 เป็น ID 3 เมื่อ 2026-11-11
+
+คำเตือน:
+- แกนและ pivot จาก CAD เป็นค่าประมาณ ต้องตรวจทิศหมุนกับหุ่นจริง
+- ห้ามสลับ ID โดยไม่แก้ mapping ในไฟล์นี้และในโค้ดพร้อมกัน
+
+
+4. COMMUNICATION AND SDK REFERENCE
+----------------------------------
+[KNOWN] Servo family/class   : SCS / SCSCL
+[KNOWN] Official Python SDK  : https://github.com/ftservo/FTServo_Python
+[KNOWN] Official class       : scscl
+[KNOWN] Bus baud             : 1000000
+[KNOWN] Windows device       : COM8
+[TO_MEASURE] Linux/Pi device : เช่น /dev/ttyUSB0 (ต้องตรวจจริง ห้ามสมมติ)
+
+ข้อกำหนดสำหรับโค้ดในอนาคต:
+- ปิดโปรแกรม FD ก่อนเปิด driver เพราะ COM8 เปิดพร้อมกันสองโปรแกรมไม่ได้
+- เริ่มจาก ping/read-only ก่อนเปิด torque
+- ตรวจให้พบ ID 0, 1, 2, 3 ครบ
+- ถ้าขาด ID ใด ID หนึ่ง ห้ามเริ่ม motion อัตโนมัติ
+- ตอนเริ่มโปรแกรมต้องอ่าน present position ก่อน ห้ามกระโดดไปค่า home ทันที
+- ต้องมี timeout, retry จำกัดครั้ง และคำสั่ง torque-off เมื่อเกิด fault
+- ควรใช้ official SDK แทนการสร้าง packet เอง ถ้า SDK ใช้งานบน platform นั้นได้
+
+SCSCL register reference จาก official SDK (ต้องตรวจรุ่นจริงอีกครั้งก่อนเขียนตรง):
+ID register                 : 5
+Baud rate register          : 6
+Minimum angle limit         : 9-10
+Maximum angle limit         : 11-12
+Torque enable               : 40
+Goal position               : 42-43
+Goal time                   : 44-45
+Goal speed                  : 46-47
+EEPROM lock                 : 48
+Present position            : 56-57
+Present speed               : 58-59
+Present load                : 60-61
+Present voltage             : 62
+Present temperature         : 63
+Moving flag                 : 66
+Present current             : 69-70 (SCS15 อาจไม่รองรับ ต้องทดสอบ)
+
+
+5. ELECTRICAL SYSTEM
+--------------------
+[TO_MEASURE] Power Supply ยี่ห้อ/รุ่น:
+[TO_MEASURE] แรงดันที่ตั้งไว้ (V):
+[TO_MEASURE] กระแสสูงสุด PSU (A):
+[TO_MEASURE] แรงดันที่ขั้ว Servo ขณะไม่มีโหลด (V):
+[TO_MEASURE] แรงดันต่ำสุดขณะ Servo หลายตัวทำงาน (V):
+[TO_MEASURE] ฟิวส์ ขนาด/ชนิด:
+[TO_MEASURE] สวิตช์ตัดไฟฉุกเฉินอยู่ตำแหน่ง:
+[TO_MEASURE] วิธีตัด torque ฉุกเฉินทาง software:
+[TO_MEASURE] วิธีตัดไฟฉุกเฉินทาง hardware:
+[TO_MEASURE] สีสาย VCC:
+[TO_MEASURE] สีสาย GND:
+[TO_MEASURE] สีสาย DATA:
+[TO_MEASURE] จุดต่อ common ground:
+[TO_MEASURE] รูป/แผนผังวงจรอยู่ไฟล์:
+[TO_MEASURE] หมายเหตุวงจร:
+
+
+6. MECHANICAL AND CAD REFERENCE
+------------------------------
+[KNOWN] Main CAD/URDF package : Emotion_Lamp_Workspace_Clean/src/lamp_cad_4dof
+[KNOWN] Joint pivot data      : Emotion_Lamp_Workspace_Clean/src/lamp_cad_4dof/urdf/joint_pivots.json
+[KNOWN] Main URDF             : Emotion_Lamp_Workspace_Clean/src/lamp_cad_4dof/urdf/lamp_cad_4dof.urdf
+[KNOWN] Original simple xacro : Emotion_Lamp_Workspace_Clean/src/lamp_description/urdf/lamp.urdf.xacro
+[KNOWN] CAD pivot status      : ค่าประมาณจาก geometry ยังไม่ใช่ค่าที่วัดจากหุ่นจริง
+[KNOWN] Collision model       : ยังไม่มี
+[KNOWN] Inertial model        : ยังไม่มี
+
+[TO_MEASURE] ความยาว link ฐานถึงไหล่ (mm):
+[TO_MEASURE] ความยาว link ไหล่ถึงศอก (mm):
+[TO_MEASURE] ความยาว link ศอกถึงหัว (mm):
+[TO_MEASURE] น้ำหนักแขนท่อนที่ 1 (g):
+[TO_MEASURE] น้ำหนักแขนท่อนที่ 2 (g):
+[TO_MEASURE] น้ำหนักหัวโคม (g):
+[TO_MEASURE] จุดที่โครงชนกันได้:
+[TO_MEASURE] รูปหุ่นประกอบอยู่ไฟล์:
+
+
+7. CALIBRATION RULES
+--------------------
+นิยามค่าที่ต้องเก็บต่อหนึ่ง joint:
+- current_raw       = ตำแหน่งที่อ่านได้ก่อนเปิด torque
+- center_raw        = ตำแหน่งศูนย์เชิงกล/ท่า neutral
+- home_raw          = ตำแหน่งที่ต้องการหลังเริ่มระบบอย่างปลอดภัย
+- min_raw_safe      = ค่าต่ำสุดที่ไม่ชนโครง
+- max_raw_safe      = ค่าสูงสุดที่ไม่ชนโครง
+- direction         = +1 หรือ -1 เพื่อแปลง raw เป็น ROS angle
+- max_step_raw      = ระยะขยับสูงสุดต่อหนึ่งคำสั่งในช่วงทดสอบ
+- max_speed_raw     = ความเร็วสูงสุดที่ทดสอบแล้วว่าปลอดภัย
+- backlash_raw      = ระยะฟรีของเฟืองโดยประมาณ
+
+สูตรแปลง nominal สำหรับสร้างโค้ดภายหลัง:
+nominal_rad_per_count = PI / 1024
+angle_rad = direction * (raw - center_raw) * nominal_rad_per_count
+raw = center_raw + direction * round(angle_rad / nominal_rad_per_count)
+ก่อนส่ง raw ต้อง clamp ให้อยู่ระหว่าง min_raw_safe และ max_raw_safe เสมอ
+
+หมายเหตุ:
+- สูตรนี้ใช้ได้หลังจากวัด center_raw และ direction แล้วเท่านั้น
+- ต้องตรวจองศาจริงกับเครื่องมือวัดก่อนใช้ควบคุมความแม่นยำสูง
+
+
+8. SERVO ID 0 - ฐาน (BASE)
+---------------------------
+[KNOWN] ID                  : 0
+[KNOWN] Joint               : ฐาน / Base
+[KNOWN] ROS name            : joint1_base
+[TO_MEASURE] Serial/label number:
+[TO_MEASURE] วันที่คาลิเบรต:
+[TO_MEASURE] ผู้คาลิเบรต:
+[TO_MEASURE] ตรวจพบด้วย ping (yes/no):
+[TO_MEASURE] current_raw ตอนเริ่ม:
+[KNOWN] center_raw (Goal ที่ตั้ง) : 410 raw_count
+[KNOWN] home_raw (Position ที่อ่านได้): 404 raw_count
+[KNOWN] min_raw_safe (FD address 9) : 0 raw_count
+[KNOWN] max_raw_safe (FD address 11): 870 raw_count
+[KNOWN] home margin จาก min/max      : 404 / 466 raw_count
+[KNOWN] direction (+1/-1)              : -1
+[KNOWN] positive motion convention     : ซ้าย
+[KNOWN] เพิ่ม raw แล้วหมุนไปทาง         : ขวา
+[TO_MEASURE] มุมจริงที่ min (degree):
+[TO_MEASURE] มุมจริงที่ max (degree):
+[TO_MEASURE] max_step_raw ช่วงทดสอบ:
+[TO_MEASURE] max_speed_raw ที่ปลอดภัย:
+[TO_MEASURE] backlash_raw:
+[TO_MEASURE] deadband/raw ที่ไม่เกิดการขยับ:
+[TO_MEASURE] voltage_idle (V):
+[TO_MEASURE] voltage_moving (V):
+[TO_MEASURE] temperature_before (°C):
+[TO_MEASURE] temperature_after (°C):
+[TO_MEASURE] load_no_load:
+[TO_MEASURE] load_normal:
+[TO_MEASURE] มีเสียง/สั่น/ติดขัด:
+[TO_MEASURE] จุดเสี่ยงชนโครง:
+[TO_MEASURE] หมายเหตุ:
+
+ผลการจับท่า center วันที่ 2026-11-11 (Torque Enable ON):
+Commanded Goal              : 410 raw_count
+Feedback Position           : 404 raw_count
+Position error              : -6 raw_count
+Voltage                     : 7.5 V
+Temperature                 : 24 °C
+Torque/Load                 : -50 raw
+Current                     : 0 raw
+Speed                       : 0 raw
+Moving                      : 0
+State                       : Normal
+
+ค่าป้องกันที่อ่านจาก FD วันที่ 2026-11-11:
+Max temperature limit       : 80 raw (แสดงเป็นค่าจาก register)
+Max input voltage           : 90 raw
+Min input voltage           : 35 raw
+Max torque limit            : 1000 raw
+Position P/D/I gain         : 10 / 10 / 0
+Punch                       : 0 raw
+CW/CCW dead band            : 1 / 1 raw
+Protect torque              : 20 raw
+Overload protection time    : 40 raw
+Overload torque             : 80 raw
+
+
+9. SERVO ID 1 - ไหล่ (SHOULDER)
+--------------------------------
+[KNOWN] ID                  : 1
+[KNOWN] Joint               : ไหล่ / Shoulder
+[KNOWN] ROS name            : joint2_shoulder
+[TO_MEASURE] Serial/label number:
+[TO_MEASURE] วันที่คาลิเบรต:
+[TO_MEASURE] ผู้คาลิเบรต:
+[TO_MEASURE] ตรวจพบด้วย ping (yes/no):
+[TO_MEASURE] current_raw ตอนเริ่ม:
+[KNOWN] center_raw (Goal ที่ตั้ง) : 566 raw_count
+[KNOWN] home_raw (Position ที่อ่านได้): 271 raw_count
+[KNOWN] min_raw_safe (FD address 9) : 120 raw_count
+[KNOWN] max_raw_safe (FD address 11): 940 raw_count
+[KNOWN] home margin จาก min/max      : 151 / 669 raw_count
+[KNOWN] direction (+1/-1)              : -1
+[KNOWN] positive motion convention     : ยกขึ้น
+[KNOWN] เพิ่ม raw แล้วหมุนไปทาง         : ลดลง
+[TO_MEASURE] มุมจริงที่ min (degree):
+[TO_MEASURE] มุมจริงที่ max (degree):
+[TO_MEASURE] max_step_raw ช่วงทดสอบ:
+[TO_MEASURE] max_speed_raw ที่ปลอดภัย:
+[TO_MEASURE] backlash_raw:
+[TO_MEASURE] deadband/raw ที่ไม่เกิดการขยับ:
+[TO_MEASURE] voltage_idle (V):
+[TO_MEASURE] voltage_moving (V):
+[TO_MEASURE] temperature_before (°C):
+[TO_MEASURE] temperature_after (°C):
+[TO_MEASURE] load_no_load:
+[TO_MEASURE] load_normal:
+[TO_MEASURE] มีเสียง/สั่น/ติดขัด:
+[TO_MEASURE] จุดเสี่ยงชนโครง:
+[TO_MEASURE] หมายเหตุ:
+
+ผลการจับท่า center วันที่ 2026-11-11 (Torque Enable ON):
+Commanded Goal              : 566 raw_count
+Feedback Position           : 568 raw_count
+Position error              : +2 raw_count
+Voltage                     : 7.4 V
+Temperature                 : 25 °C
+Torque/Load                 : 45 raw
+Current                     : 0 raw
+Speed                       : 0 raw
+Moving                      : 0
+State                       : Normal
+
+ค่าป้องกันที่อ่านจาก FD วันที่ 2026-11-11:
+Max temperature limit       : 80 raw (แสดงเป็นค่าจาก register)
+Max input voltage           : 90 raw
+Min input voltage           : 45 raw
+Max torque limit            : 1000 raw
+Position P/D/I gain         : 15 / 15 / 0
+Punch                       : 30 raw
+CW/CCW dead band            : 1 / 1 raw
+Protect torque              : 20 raw
+Overload protection time    : 100 raw
+Overload torque             : 80 raw
+
+
+10. SERVO ID 2 - ศอก (ELBOW)
+-----------------------------
+[KNOWN] ID                  : 2
+[KNOWN] Joint               : ศอก / Elbow
+[KNOWN] ROS name            : joint3_elbow
+[TO_MEASURE] Serial/label number:
+[TO_MEASURE] วันที่คาลิเบรต:
+[TO_MEASURE] ผู้คาลิเบรต:
+[TO_MEASURE] ตรวจพบด้วย ping (yes/no):
+[TO_MEASURE] current_raw ตอนเริ่ม:
+[KNOWN] center_raw (Goal ที่ตั้ง) : 593 raw_count
+[KNOWN] home_raw (Position ที่อ่านได้): 946 raw_count
+[KNOWN] min_raw_safe (FD address 9) : 165 raw_count
+[KNOWN] max_raw_safe (FD address 11): 1023 raw_count
+[KNOWN] home margin จาก min/max      : 781 / 77 raw_count
+[WARNING] home_raw อยู่ห่าง max_raw_safe เพียง 77 raw_count
+[KNOWN] direction (+1/-1)              : +1
+[KNOWN] positive motion convention     : งอเข้า
+[KNOWN] เพิ่ม raw แล้วหมุนไปทาง         : งอเข้า
+[TO_MEASURE] มุมจริงที่ min (degree):
+[TO_MEASURE] มุมจริงที่ max (degree):
+[TO_MEASURE] max_step_raw ช่วงทดสอบ:
+[TO_MEASURE] max_speed_raw ที่ปลอดภัย:
+[TO_MEASURE] backlash_raw:
+[TO_MEASURE] deadband/raw ที่ไม่เกิดการขยับ:
+[TO_MEASURE] voltage_idle (V):
+[TO_MEASURE] voltage_moving (V):
+[TO_MEASURE] temperature_before (°C):
+[TO_MEASURE] temperature_after (°C):
+[TO_MEASURE] load_no_load:
+[TO_MEASURE] load_normal:
+[TO_MEASURE] มีเสียง/สั่น/ติดขัด:
+[TO_MEASURE] จุดเสี่ยงชนโครง:
+[TO_MEASURE] หมายเหตุ:
+
+ผลการจับท่า center วันที่ 2026-11-11 (Torque Enable ON):
+Commanded Goal              : 593 raw_count
+Feedback Position           : 598 raw_count
+Position error              : +5 raw_count
+Voltage                     : 7.5 V
+Temperature                 : 22 °C
+Torque/Load                 : 40 raw
+Current                     : 0 raw
+Speed                       : 0 raw
+Moving                      : 0
+State                       : Normal
+
+ค่าป้องกันที่อ่านจาก FD วันที่ 2026-11-11:
+Max temperature limit       : 80 raw (แสดงเป็นค่าจาก register)
+Max input voltage           : 90 raw
+Min input voltage           : 35 raw
+Max torque limit            : 1000 raw
+Position P/D/I gain         : 10 / 10 / 0
+Punch                       : 0 raw
+CW/CCW dead band            : 1 / 1 raw
+Protect torque              : 20 raw
+Overload protection time    : 40 raw
+Overload torque             : 80 raw
+
+
+11. SERVO ID 3 - หัว (HEAD)
+----------------------------
+[KNOWN] ID                  : 3
+[KNOWN] Joint               : หัว / Head
+[KNOWN] ROS name            : joint4_head
+[TO_MEASURE] Serial/label number:
+[TO_MEASURE] วันที่คาลิเบรต:
+[TO_MEASURE] ผู้คาลิเบรต:
+[KNOWN] ตรวจพบด้วย FD       : yes
+[KNOWN] present position ก่อนเปลี่ยน ID : 270 raw_count
+[KNOWN] center_raw (Goal ที่ตั้ง) : 176 raw_count
+[KNOWN] home_raw (Position ที่อ่านได้): 0 raw_count
+[KNOWN] min_raw_safe (FD address 9) : 0 raw_count
+[KNOWN] max_raw_safe (FD address 11): 720 raw_count
+[KNOWN] home margin จาก min/max      : 0 / 720 raw_count
+[WARNING] home_raw เท่ากับ min_raw_safe ไม่มี safety margin
+[KNOWN] direction (+1/-1)              : +1
+[KNOWN] positive motion convention     : เงยขึ้น
+[KNOWN] เพิ่ม raw แล้วหมุนไปทาง         : เงยขึ้น
+[TO_MEASURE] มุมจริงที่ min (degree):
+[TO_MEASURE] มุมจริงที่ max (degree):
+[TO_MEASURE] max_step_raw ช่วงทดสอบ:
+[TO_MEASURE] max_speed_raw ที่ปลอดภัย:
+[TO_MEASURE] backlash_raw:
+[TO_MEASURE] deadband/raw ที่ไม่เกิดการขยับ:
+[KNOWN] voltage_idle จากภาพ FD : 7.5 V
+[TO_MEASURE] voltage_moving (V):
+[KNOWN] temperature_before จากภาพ FD : 22 °C
+[TO_MEASURE] temperature_after (°C):
+[KNOWN] load_no_load/torque จากภาพ FD : 0 raw
+[TO_MEASURE] load_normal:
+[TO_MEASURE] มีเสียง/สั่น/ติดขัด:
+[TO_MEASURE] จุดเสี่ยงชนโครง:
+[TO_MEASURE] หมายเหตุ:
+
+ผลการจับท่า center วันที่ 2026-11-11 (Torque Enable ON):
+Commanded Goal              : 176 raw_count
+Feedback Position           : 179 raw_count
+Position error              : +3 raw_count
+Voltage                     : 7.5 V
+Temperature                 : 22 °C
+Torque/Load                 : 20 raw
+Current                     : 0 raw
+Speed                       : 0 raw
+Moving                      : 0
+State                       : Normal
+
+ค่าป้องกันที่อ่านจาก FD วันที่ 2026-11-11:
+Max temperature limit       : 80 raw (แสดงเป็นค่าจาก register)
+Max input voltage           : 90 raw
+Min input voltage           : 35 raw
+Max torque limit            : 1000 raw
+Position P/D/I gain         : 10 / 10 / 0
+Punch                       : 0 raw
+CW/CCW dead band            : 1 / 1 raw
+Protect torque              : 20 raw
+Overload protection time    : 40 raw
+Overload torque             : 80 raw
+
+
+12. GLOBAL SAFETY LIMITS
+------------------------
+[TO_DECIDE] startup torque default (ON/OFF):
+[TO_DECIDE] watchdog timeout (ms):
+[TO_DECIDE] command update rate (Hz):
+[TO_MEASURE] maximum safe temperature (°C):
+[TO_MEASURE] minimum safe bus voltage (V):
+[TO_MEASURE] maximum safe load value:
+[TO_MEASURE] maximum safe simultaneous moving joints:
+[TO_MEASURE] emergency-stop test result:
+[TO_MEASURE] behavior when USB disconnects:
+[TO_MEASURE] behavior when power dips:
+
+ข้อกำหนดที่แนะนำสำหรับโค้ดรุ่นแรก:
+- torque ต้อง OFF เป็นค่าเริ่มต้น
+- ต้องมีคำสั่ง enable ชัดเจนก่อนขยับ
+- เริ่มคำสั่งจาก present position เพื่อลดการกระโดด
+- จำกัด raw target ทุกครั้งก่อนส่ง
+- จำกัดอัตราการเปลี่ยน target
+- communication timeout ต้องเข้าสู่ safe state
+- มีปุ่ม/คำสั่ง emergency torque-off
+- ห้ามเปิด automatic personality motion จน joint ทั้ง 4 ผ่านการคาลิเบรต
+
+
+13. FIRST CALIBRATION PROCEDURE
+-------------------------------
+ทำทีละ Servo และเตรียมตัดไฟตลอดเวลา
+
+Step 1 : วางหุ่นในท่าที่ไม่ติดหรือรับแรงผิดปกติ
+Step 2 : เปิดไฟโดยยังไม่ enable torque
+Step 3 : ping ID 0-3 และบันทึกว่าครบหรือไม่
+Step 4 : อ่าน current_raw, voltage, temperature ของทุก ID
+Step 5 : เลือกทดสอบทีละ ID
+Step 6 : ขยับเป้าหมายทีละน้อยรอบ current_raw
+Step 7 : บันทึกทิศทางเมื่อ raw เพิ่มขึ้น
+Step 8 : หา center_raw/neutral
+Step 9 : หา min_raw_safe และ max_raw_safe อย่างช้า ๆ โดยไม่ชน hard stop
+Step 10: วัด backlash, เสียง, การสั่น, voltage drop และ temperature
+Step 11: ปิด torque และตรวจว่าหุ่นอยู่ในสภาวะปลอดภัย
+Step 12: อัปเดตค่าจริงใน section ของ Servo แต่ละตัว
+
+
+14. TEST SESSION LOG
+--------------------
+SESSION 1
+Date/time                  : 2026-11-11 (เวลาไม่ได้บันทึก)
+Tester                     : เจ้าของหุ่น
+PC/Pi                      : Windows PC
+Software/version           : Feetech FD Debug Software V1.9.8.5
+Port/device                : COM8 / CH343 / 1000000 baud
+Power supply setting       :
+Servos connected           : IDs 0, 1, 2, 3 (ตัวหัวเปลี่ยนจาก ID4 เป็น ID3)
+Test objective             : ตรวจและบันทึก safe position limits ที่ตั้งไว้แล้ว
+Commands sent              : ไม่ทราบ/ไม่ได้บันทึก
+Measurements               : ID0=0..870, ID1=120..940, ID2=165..1023, ID3=0..720
+Result                     : FD พบ Servo 4 ตัว IDs 0,1,2,3; ตัวหัวสถานะ Normal
+Fault/error                :
+Emergency stop used        :
+Files/photos created       : ภาพหน้าจอ Programming ของ ID0,1,2,4 และ Debug ของ ID4
+Next action                : บันทึก center/home/direction ของทุก joint
+
+SESSION 2
+Date/time                  : 2026-11-11 (เวลาไม่ได้บันทึก)
+Tester                     : เจ้าของหุ่น
+PC/Pi                      : Windows PC
+Software/version           : Feetech FD Debug Software V1.9.8.5
+Port/device                : COM8 / CH343 / 1000000 baud
+Power supply setting       : feedback 7.4-7.5 V
+Servos connected           : IDs 0, 1, 2, 3
+Test objective             : ตั้งและบันทึก center ของทุก joint
+Commands sent              : ID0=410, ID1=566, ID2=593, ID3=176 raw_count
+Measurements               : feedback ID0=404, ID1=568, ID2=598, ID3=179 raw_count
+Result                     : Servo ทุกตัวหยุดนิ่ง, Moving=0, State=Normal
+Fault/error                : ไม่พบในภาพ
+Emergency stop used        : no
+Files/photos created       : ภาพหน้า Debug ของ center IDs 0,1,2,3
+Next action                : ยืนยัน home_raw และ direction ของแต่ละ joint
+
+SESSION 3
+Date/time                  : 2026-11-11 (เวลาไม่ได้บันทึก)
+Tester                     : เจ้าของหุ่น
+PC/Pi                      : Windows PC
+Software/version           : Feetech FD Debug Software V1.9.8.5
+Port/device                : COM8, 1000000 bps
+Power supply setting       : feedback 7.5 V
+Servos connected           : IDs 0, 1, 2, 3
+Test objective             : จัดท่า Home และบันทึกค่าจากช่อง Position
+Commands sent              : จัดท่า Home ผ่าน FD; ไม่ใช้ค่า Goal input 511 ที่ค้างบนหน้าจอ
+Measurements               : home Position ID0=404, ID1=271, ID2=946, ID3=0 raw_count
+Result                     : ทุกแกน Moving=0, Speed=0, Torque=0, Current=0, State=Normal
+Fault/error                : ไม่พบ fault; ID3 ไม่มีระยะเผื่อจาก min และ ID2 ห่าง max 77 raw_count
+Emergency stop used        : ไม่ได้บันทึก
+Files/photos created       : ภาพหน้า Debug ของท่า Home IDs 0,1,2,3
+Next action                : ยืนยัน safety margin ของ ID2/ID3 แล้วบันทึก direction ของแต่ละ joint
+
+SESSION 4
+Date/time                  : 2026-11-11 03:29-03:34 +07:00
+Tester                     : เจ้าของหุ่น
+PC/Pi                      : Windows PC
+Software/version           : Emotion Robotic Lamp — SCS15 Safe Test
+Port/device                : COM8 / CH343 / 1000000 baud
+Power supply setting       : ไม่ได้บันทึกจาก GUI
+Servos connected           : IDs 0, 1, 2, 3; Connect/ping ผ่านครบ
+Test objective             : ทดสอบ Home, Center และทิศทางเมื่อค่า raw เพิ่ม
+Commands sent              : Home/Center speed 50; jog + ทีละ ID; กลับ Home อีกครั้ง
+Measurements               : ID0 406→416→411 ขวา; ID1 568→588→589 ลดลง; ID2 599→619→617 งอเข้า; ID3 170→190→184 เงยขึ้น; กลับ Home ได้ 407/266/941/1
+Result                     : Home/Center/jog และกลับ Home ผ่าน; direction ID0=-1, ID1=-1, ID2=+1, ID3=+1 ตาม positive motion convention
+Fault/error                : ไม่พบใน log
+Emergency stop used        : no
+Files/photos created       : servo_test_log.csv, calibration_results.json, ภาพหน้าจอ GUI
+Next action                : Torque Off อย่างปลอดภัยเมื่อเลิกทดสอบ; วัด max_step/max_speed และทดสอบ USB/power faults
+
+
+15. EXISTING SOFTWARE REFERENCE
+-------------------------------
+[KNOWN] Current ROS version      : ROS 2 Jazzy ใน Docker
+[KNOWN] Current project status   : simulation/RViz ยังไม่มี SCS15 hardware driver
+[KNOWN] Personality modes        : neutral, happy, sad, curious
+[KNOWN] CPG output topic         : /lamp/cpg_offsets
+[KNOWN] Interaction topic        : /lamp/interaction_enabled
+[KNOWN] Personality topic        : /lamp/personality_mode
+[KNOWN] Simulated state topic    : /joint_states
+[KNOWN] Windows calibration GUI  : tools/servo_calibration_gui/app.py
+[KNOWN] GUI launcher             : tools/servo_calibration_gui/START_SERVO_GUI.bat
+[KNOWN] GUI mock launcher        : tools/servo_calibration_gui/START_SERVO_GUI_MOCK.bat
+[KNOWN] GUI default jog step     : 10 raw_count (เลือกได้ 1, 5, 10, 20)
+[KNOWN] GUI default speed        : 50 raw (เลือกได้ 20, 50, 100; ห้าม 0)
+[KNOWN] GUI verification status  : unit tests/mock smoke ผ่าน; real Connect, Home, Center และ jog direction ผ่าน; fault tests ยังไม่ทำ
+[KNOWN] Integrated CPG GUI       : tools/robot_cpg_gui/app.py
+[KNOWN] Integrated GUI config    : tools/robot_cpg_gui/robot_config.json
+[KNOWN] Integrated GUI mock      : tools/robot_cpg_gui/START_CPG_GUI_MOCK.bat
+[KNOWN] Integrated GUI Pi launch : tools/robot_cpg_gui/start_cpg_gui.sh
+[KNOWN] CPG hardware mapping     : direct drive 1:1, Center=90 degree, SCS15 nominal 180 degree/1024 raw
+[KNOWN] CPG hardware envelope    : Center ±171 raw (ประมาณ ±30 degree), speed 20, loop 20 Hz (ยังไม่ผ่าน hardware acceptance)
+
+ไฟล์หลักของโค้ดเดิม:
+- CPG:
+  Emotion_Lamp_Workspace_Clean/src/lamp_cpg/lamp_cpg/cpg_engine.py
+- Motion controller:
+  Emotion_Lamp_Workspace_Clean/src/lamp_control/lamp_control/motion_controller.py
+- Presence monitor:
+  Emotion_Lamp_Workspace_Clean/src/lamp_perception/lamp_perception/presence_monitor.py
+- Main hardware CAD:
+  Emotion_Lamp_Workspace_Clean/src/lamp_cad_4dof
+
+ข้อจำกัดของโค้ดเดิม:
+- motion_controller ส่ง JointState สำหรับ visualization เท่านั้น
+- ยังไม่มีการเปิด serial port
+- ยังไม่มีการแปลง radian เป็น raw_count ของ SCS15
+- joint limits ปัจจุบันเป็น simulation limits ไม่ใช่ค่าที่วัดจากหุ่นจริง
+- pivot และทิศทาง CAD ยังต้องตรวจจากหุ่นจริง
+- presence_monitor ไม่ได้ถูกเปิดใน main launch
+
+
+16. REQUIREMENTS FOR FUTURE GENERATED CODE
+------------------------------------------
+AI ที่สร้างโค้ดควรทำตามลำดับนี้:
+
+Phase A - Hardware diagnostic บนคอม
+- เปิดพอร์ตจาก config ไม่ hard-code COM8 เพียงค่าเดียว
+- ping ID 0,1,2,3
+- อ่าน position, speed, load, voltage, temperature และ moving
+- แสดงข้อมูลโดยไม่ขยับ Servo เป็นค่าเริ่มต้น
+- มีคำสั่ง torque-off ทั้งหมด
+- บันทึกผลกลับมาให้ผู้ใช้กรอกในไฟล์นี้
+
+Phase B - Safe calibration tool
+- เลือก Servo ได้ทีละ ID
+- ตั้ง target เป็น raw_count รอบ present position
+- clamp target ตามค่าที่คาลิเบรตแล้ว
+- จำกัด step และ speed
+- มี emergency stop
+- ห้ามทดสอบ ID ที่ไม่มีค่า safe limits หลังขั้น calibration เริ่มต้น
+
+Phase C - Raspberry Pi driver
+- ใช้ device path ที่ตรวจพบจริงบน Pi
+- โหลด ID, center, direction และ limits จากข้อมูลในไฟล์นี้หรือ config ที่แปลงจากไฟล์นี้
+- อ่าน feedback และส่งคำสั่งแบบมี watchdog
+- ไม่เคลื่อนเมื่อเริ่ม node จนกว่าจะได้รับ enable
+
+Phase D - ROS 2 integration
+- รับ target joint angles หน่วย radian
+- แปลง radian เป็น raw_count ด้วย calibration ของแต่ละ joint
+- publish feedback จาก Servo จริงเป็น sensor_msgs/JointState
+- เชื่อมกับ /lamp/cpg_offsets และ motion controller เดิม
+- รองรับ safe shutdown และ torque-off เมื่อ node ปิด
+
+
+17. MINIMUM DATA REQUIRED BEFORE GENERATING MOTOR CONTROL CODE
+--------------------------------------------------------------
+ต้องมีข้อมูลต่อไปนี้ครบก่อนสร้างโค้ดที่ขยับหุ่นอัตโนมัติ:
+
+[ ] Power supply voltage/current ยืนยันแล้ว
+[x] ID 0-3 ping ผ่านครบ
+[ ] current_raw ของทุก joint
+[x] center_raw ของทุก joint
+[x] home_raw ของทุก joint
+[x] direction ของทุก joint
+[x] min_raw_safe ของทุก joint
+[x] max_raw_safe ของทุก joint
+[ ] max_step_raw ของทุก joint
+[ ] max_speed_raw ของทุก joint
+[ ] emergency stop ใช้งานได้
+[ ] behavior เมื่อ USB หลุดได้รับการทดสอบ
+[ ] behavior เมื่อไฟตกได้รับการทดสอบ
+[ ] ไม่มี joint ใดชนโครงในช่วง safe limits
+
+
+18. OPEN QUESTIONS / UNKNOWN VALUES
+-----------------------------------
+- รุ่น Raspberry Pi และ OS ที่จะใช้
+- device path ของ CH343 บน Pi
+- มุมจริงที่ min/max, backlash, max_step และ max_speed ของ joint ทั้ง 4
+- ขนาดและตำแหน่ง emergency stop
+- สเปก power supply และ fuse
+- safe speed, safe step, safe load และ safe temperature
+- รูปแบบการติดตั้งกล้องและ sensor เพิ่มเติม
+- จะใช้ Python driver หรือ C++ driver บน Pi
+- อัตรา control loop ที่เหมาะสมหลังทดสอบจริง
+
+
+19. CHANGE HISTORY
+------------------
+2026-11-11
+- สร้างไฟล์ข้อมูลหุ่นฉบับแรก
+- บันทึก SCS15, CH343, COM8, baud 1000000
+- บันทึก mapping ID 0=ฐาน, 1=ไหล่, 2=ศอก, 3=หัว
+- เพิ่ม template สำหรับ calibration, safety, electrical และ test sessions
+- เพิ่มข้อกำหนดสำหรับ AI เพื่อสร้างโค้ด diagnostic, Pi driver และ ROS integration ต่อไป
+- อ่าน FD ครั้งแรกพบ ID 0,1,2,4 และยืนยันว่า ID4 คือตัวหัว
+- เปลี่ยน Servo หัวจาก ID4 เป็น ID3 สำเร็จ; ID ปัจจุบันเป็น 0,1,2,3
+- บันทึก safe position limits ของ ID0, ID1, ID2 และ ID3
+- บันทึก feedback ของ Servo หัวก่อนเปลี่ยน ID: position 270, voltage 7.5V, temperature 22°C
+- บันทึก center_raw: ID0=410, ID1=566, ID2=593, ID3=176
+- บันทึก feedback ขณะจับ center รวม position error, voltage, temperature และ torque/load
+- บันทึก home_raw จาก Position: ID0=404, ID1=271, ID2=946, ID3=0
+- เพิ่มคำเตือน Home ของ ID3 เท่ากับ min_raw_safe และ ID2 ห่าง max_raw_safe 77 raw_count
+- เพิ่ม Windows Servo Calibration GUI พร้อม Home, Center, jog +/-, direction record และ Torque Off
+- กำหนด GUI default Step=10 raw_count, Speed=50 raw และจำกัด Speed สูงสุด 100
+- เพิ่ม mock mode, unit tests, CSV log และ JSON calibration results; hardware acceptance ยังไม่ทดสอบ
+- ทดสอบ GUI กับฮาร์ดแวร์จริงผ่านสำหรับ Connect, Home, Center และ jog + ของ IDs 0-3
+- บันทึกทิศทาง raw เพิ่ม: ID0=ขวา, ID1=ลดลง, ID2=งอเข้า, ID3=เงยขึ้น
+- กำหนด positive motion เป็น ซ้าย/ยกขึ้น/งอเข้า/เงยขึ้น และบันทึก direction เป็น -1/-1/+1/+1
+- เพิ่ม Integrated Camera CPG GUI แบบ Pure Python พร้อม Emergency Torque Off, Servo/CPG graphs และ mock mode
+- เชื่อม face_vision(maincpg) → hardware mapper → SCS15 runtime; direct drive 1:1, Center=90 degree, ช่วง 60–120 degree, จำกัด Center ±171 raw, speed 20
+- เพิ่ม safety interlock: หลัง Enable Motion ต้อง Go Center สำเร็จก่อน Start CPG ทุกครั้ง
+- เปลี่ยน Servo Feedback graph/table เป็น absolute joint degree ในกรอบ 60–120 degree เดียวกับ Main CPG
+

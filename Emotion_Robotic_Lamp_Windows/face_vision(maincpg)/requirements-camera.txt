@@ -1,0 +1,5 @@
+opencv-contrib-python
+mediapipe
+numpy
+# Optional for --plot only
+matplotlib>=3.8,<4

@@ -1,0 +1,215 @@
+[
+  {
+    "name": "A0-baseline",
+    "configuration": {
+      "params": {
+        "alpha": 1.1,
+        "phi": 0.2,
+        "dt": 0.05
+      },
+      "initial": {
+        "o1": 0.1,
+        "o2": 0
+      },
+      "warmup": 200,
+      "steps": 1000,
+      "joints": [
+        {
+          "name": "Base yaw",
+          "center": 0,
+          "amplitude": 1,
+          "min": -90,
+          "max": 90,
+          "enabled": true,
+          "source": "o1",
+          "invert": false
+        },
+        {
+          "name": "Shoulder pitch",
+          "center": -25,
+          "amplitude": 1,
+          "min": -70,
+          "max": 70,
+          "enabled": true,
+          "source": "o2",
+          "invert": false
+        },
+        {
+          "name": "Elbow pitch",
+          "center": 65,
+          "amplitude": 1,
+          "min": -20,
+          "max": 120,
+          "enabled": true,
+          "source": "o1",
+          "invert": true
+        },
+        {
+          "name": "Head pitch",
+          "center": -25,
+          "amplitude": 1,
+          "min": -80,
+          "max": 80,
+          "enabled": true,
+          "source": "o2",
+          "invert": false
+        }
+      ],
+      "mode": "Neutral",
+      "motion": "direct steady-state decoder"
+    },
+    "metrics": {
+      "period": 32.00605360013519,
+      "seconds": 1.6003026800067595,
+      "frequency": 0.624881787985118,
+      "amplitude1": 0.5698299990815566,
+      "amplitude2": 0.5698299914704665,
+      "peakToPeak": 1.1396599981631133,
+      "phase": -90.00000268340797,
+      "duration": 50,
+      "reason": ""
+    }
+  },
+  {
+    "name": "A1-fast",
+    "configuration": {
+      "params": {
+        "alpha": 1.1,
+        "phi": 0.4,
+        "dt": 0.05
+      },
+      "initial": {
+        "o1": 0.1,
+        "o2": 0
+      },
+      "warmup": 200,
+      "steps": 1000,
+      "joints": [
+        {
+          "name": "Base yaw",
+          "center": 0,
+          "amplitude": 1,
+          "min": -90,
+          "max": 90,
+          "enabled": true,
+          "source": "o1",
+          "invert": false
+        },
+        {
+          "name": "Shoulder pitch",
+          "center": -25,
+          "amplitude": 1,
+          "min": -70,
+          "max": 70,
+          "enabled": true,
+          "source": "o2",
+          "invert": false
+        },
+        {
+          "name": "Elbow pitch",
+          "center": 65,
+          "amplitude": 1,
+          "min": -20,
+          "max": 120,
+          "enabled": true,
+          "source": "o1",
+          "invert": true
+        },
+        {
+          "name": "Head pitch",
+          "center": -25,
+          "amplitude": 1,
+          "min": -80,
+          "max": 80,
+          "enabled": true,
+          "source": "o2",
+          "invert": false
+        }
+      ],
+      "mode": "Neutral",
+      "motion": "direct steady-state decoder"
+    },
+    "metrics": {
+      "period": 15.76781495822187,
+      "seconds": 0.7883907479110935,
+      "frequency": 1.2684065644473665,
+      "amplitude1": 0.5704253562569754,
+      "amplitude2": 0.5704261476194025,
+      "peakToPeak": 1.1408507125139509,
+      "phase": -90.00299793289655,
+      "duration": 50,
+      "reason": ""
+    }
+  },
+  {
+    "name": "A2-high-gain",
+    "configuration": {
+      "params": {
+        "alpha": 1.3,
+        "phi": 0.2,
+        "dt": 0.05
+      },
+      "initial": {
+        "o1": 0.1,
+        "o2": 0
+      },
+      "warmup": 200,
+      "steps": 1000,
+      "joints": [
+        {
+          "name": "Base yaw",
+          "center": 0,
+          "amplitude": 1,
+          "min": -90,
+          "max": 90,
+          "enabled": true,
+          "source": "o1",
+          "invert": false
+        },
+        {
+          "name": "Shoulder pitch",
+          "center": -25,
+          "amplitude": 1,
+          "min": -70,
+          "max": 70,
+          "enabled": true,
+          "source": "o2",
+          "invert": false
+        },
+        {
+          "name": "Elbow pitch",
+          "center": 65,
+          "amplitude": 1,
+          "min": -20,
+          "max": 120,
+          "enabled": true,
+          "source": "o1",
+          "invert": true
+        },
+        {
+          "name": "Head pitch",
+          "center": -25,
+          "amplitude": 1,
+          "min": -80,
+          "max": 80,
+          "enabled": true,
+          "source": "o2",
+          "invert": false
+        }
+      ],
+      "mode": "Neutral",
+      "motion": "direct steady-state decoder"
+    },
+    "metrics": {
+      "period": 36.758713280072,
+      "seconds": 1.8379356640036002,
+      "frequency": 0.5440886857931069,
+      "amplitude1": 0.8212273341437479,
+      "amplitude2": 0.821225158776934,
+      "peakToPeak": 1.6424546682874959,
+      "phase": -89.9882655850909,
+      "duration": 50,
+      "reason": ""
+    }
+  }
+]

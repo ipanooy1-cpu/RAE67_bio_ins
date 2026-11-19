@@ -1,0 +1,19 @@
+services:
+  emotion_lamp:
+    build:
+      context: .
+      dockerfile: Dockerfile.windows
+    image: emotion-lamp-windows:latest
+    platform: linux/amd64
+    container_name: emotion_lamp_windows
+    working_dir: /workspace
+    volumes:
+      - ./workspace:/workspace
+    ports:
+      - "127.0.0.1:5901:5900"
+    environment:
+      - DISPLAY=:99
+      - LIBGL_ALWAYS_SOFTWARE=1
+      - QT_QPA_PLATFORM=xcb
+      - QT_X11_NO_MITSHM=1
+    command: sleep infinity

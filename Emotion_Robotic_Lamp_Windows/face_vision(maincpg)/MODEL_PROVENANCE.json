@@ -1,0 +1,5 @@
+{
+  "source": "../../cpg_for_lamp.py",
+  "sha256": "21e626391ecf39c67b9852800119b7affaed25a789236b25fc1921329c10bc4f",
+  "model_status": "proposed simulation settings; no servo driver/calibration"
+}
